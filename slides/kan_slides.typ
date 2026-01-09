@@ -299,7 +299,7 @@
     [
       - Smooth *piecewise-polynomial* functions of one variable $x$
       - Controlled by knots + coefficients → flexible local curves
-      - Approximate 1D functions very well with few parameters
+      - Approximate 1D functions very well with _few parameters_
 
       #v(30pt)
 
@@ -314,72 +314,73 @@
   )
 ]
 
-#slide(title: [MLP vs KAN (shallow): where does nonlinearity live?])[
-  #grid(
-    columns: (1.25fr, 1fr),
-    [
-      #figure(
-        image(fig_path + "kan_mlp_shallow.png", width: 100%),
-        caption: [Shallow MLP vs shallow KAN (Fig. 0.1a,b). @kan-liu2025],
-      )
-      #v(0.25em)
-      #color-block(title: [Key idea])[
-        - MLP: fixed activation $sigma$ on nodes; learn weights $w_(j,i)$ on edges.
-        - KAN: learn 1D edge functions $phi_(q,p)$; nodes only sum inputs.
-        - Intuition: learn expressive 1D building blocks, then compose across layers.
-        - Sum is the only multivariate operation (no explicit products).
-        - Example trick: $x dot y = exp(log x + log y)$ shows how products can be expressed by univariate maps + addition.
-      ]
-    ],
-    [
-      #color-block(title: [Shallow formulas])[
-        - MLP / UAT-style:
-          $ f(bold(x)) approx sum_(j=1)^m a_j sigma(bold(w)_j^T bold(x) + b_j) $
-        - KAN / KAT-style:
-          $ f(bold(x)) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p)) $
-      ]
-      #text(size: 11pt)[@kan-liu2025]
+// I think the nonlinearity is sufficiently introduced in earlier slides already
+// #slide(title: [MLP vs KAN (shallow): where does nonlinearity live?])[
+//   #grid(
+//     columns: (1.25fr, 1fr),
+//     [
+//       #figure(
+//         image(fig_path + "kan_mlp_shallow.png", width: 100%),
+//         caption: [Shallow MLP vs shallow KAN (Fig. 0.1a,b). @kan-liu2025],
+//       )
+//       #v(0.25em)
+//       #color-block(title: [Key idea])[
+//         - MLP: fixed activation $sigma$ on nodes; learn weights $w_(j,i)$ on edges.
+//         - KAN: learn 1D edge functions $phi_(q,p)$; nodes only sum inputs.
+//         - Intuition: learn expressive 1D building blocks, then compose across layers.
+//         - Sum is the only multivariate operation (no explicit products).
+//         - Example trick: $x dot y = exp(log x + log y)$ shows how products can be expressed by univariate maps + addition.
+//       ]
+//     ],
+//     [
+//       #color-block(title: [Shallow formulas])[
+//         - MLP / UAT-style:
+//           $ f(bold(x)) approx sum_(j=1)^m a_j sigma(bold(w)_j^T bold(x) + b_j) $
+//         - KAN / KAT-style:
+//           $ f(bold(x)) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p)) $
+//       ]
+//       #text(size: 11pt)[@kan-liu2025]
 
-      //[Connections: fixed vs learnable nonlinearity; inductive bias towards symbolic/compositional structure.]
-    ],
-  )
-]
+//       //[Connections: fixed vs learnable nonlinearity; inductive bias towards symbolic/compositional structure.]
+//     ],
+//   )
+// ]
 
-#slide(title: [MLP vs KAN (deep): what gets learned?])[
-  #grid(
-    columns: (1.25fr, 1fr),
-    [
-      #figure(
-        image(fig_path + "kan_mlp_deep.png", width: 100%),
-        caption: [Deep MLP vs deep KAN (Fig. 0.1c,d). @kan-liu2025],
-      )
-      #v(0.25em)
-      #color-block(title: [Deep takeaway])[
-        - Deep MLPs: learn linear maps $bold(W)_l$; nonlinearity stays fixed.
-        - Deep KANs: learn function matrices $bold(Phi)_l$ (one 1D function per edge).
-        - Practical upside: plot/inspect learned edge functions directly.
-      ]
-    ],
-    [
-      // TODO replace ∘ with poper typst symbol for function composition
-      #color-block(title: [Deep composition])[
-        - Deep MLP:
-          $
-            "MLP"(bold(x)) = (bold(W)_(L-1) compose sigma compose bold(W)_(L-2) compose ... compose sigma compose bold(W)_0)(bold(x))
-          $
-        - Deep KAN:
-          $ "KAN"(bold(x)) = (bold(Phi)_(L-1) compose ... compose bold(Phi)_0)(bold(x)) $
-      ]
-      @kan-liu2025
+// #slide(title: [MLP vs KAN (deep): what gets learned?])[
+//   #grid(
+//     columns: (1.25fr, 1fr),
+//     [
+//       #figure(
+//         image(fig_path + "kan_mlp_deep.png", width: 100%),
+//         caption: [Deep MLP vs deep KAN (Fig. 0.1c,d). @kan-liu2025],
+//       )
+//       #v(0.25em)
+//       #color-block(title: [Deep takeaway])[
+//         - Deep MLPs: learn linear maps $bold(W)_l$; nonlinearity stays fixed.
+//         - Deep KANs: learn function matrices $bold(Phi)_l$ (one 1D function per edge).
+//         - Practical upside: plot/inspect learned edge functions directly.
+//       ]
+//     ],
+//     [
+//       // TODO replace ∘ with poper typst symbol for function composition
+//       #color-block(title: [Deep composition])[
+//         - Deep MLP:
+//           $
+//             "MLP"(bold(x)) = (bold(W)_(L-1) compose sigma compose bold(W)_(L-2) compose ... compose sigma compose bold(W)_0)(bold(x))
+//           $
+//         - Deep KAN:
+//           $ "KAN"(bold(x)) = (bold(Phi)_(L-1) compose ... compose bold(Phi)_0)(bold(x)) $
+//       ]
+//       @kan-liu2025
 
-      #v(0.2em)
-      #color-block(title: [Interpretation])[
-        - MLP: learn linear maps $bold(W)$; nonlinearity is fixed.
-        - KAN: learn edge functions $phi_(l,j,i)$; nodes are sums.
-      ]
-    ],
-  )
-]
+//       #v(0.2em)
+//       #color-block(title: [Interpretation])[
+//         - MLP: learn linear maps $bold(W)$; nonlinearity is fixed.
+//         - KAN: learn edge functions $phi_(l,j,i)$; nodes are sums.
+//       ]
+//     ],
+//   )
+// ]
 
 
 #slide(title: [UAT vs KAT: what do they guarantee?])[
@@ -814,6 +815,13 @@
     - How should we evaluate interpretability vs performance for science?
   ]
 ]
+
+#warning-note([
+  Why are KANS not yet used in production if they offer that much benefit in many scenarios?
+    - Framework support
+    - Not much industrial know how
+    - Is there something else?
+  ])
 
 #slide(title: [References])[
   #set text(size: 9pt)
