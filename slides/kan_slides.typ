@@ -107,10 +107,36 @@
 // #slide(title: [Motivation])[
 //   #color-block(title: [Why KANs?])[
 //     - Interpretability: learned *1D edge functions* can be inspected and simplified.
-//     - Parameter efficiency on scientific tasks. @kan-liu2025
-//     - Better inductive bias when the target is smooth + compositional (common in physics/biology). @kan-liu2025
+//     - Parameter efficiency on scientific tasks. @liu_kan_2025
+//     - Better inductive bias when the target is smooth + compositional (common in physics/biology). @liu_kan_2025
 //   ]
 // ]
+
+#slide(title: [Multi-Layer Perceptrons(MLPs) & its Problems])[
+  #grid(
+    columns: (1.2fr, 1fr),
+    gutter: 30pt,
+    [
+  #quote-block()[MLPs are powerful universal function approximators]
+
+  #v(10pt)
+  #color-block(title: [Drawbacks of MLPs])[
+    - Knowledge is contained in "billion" of _weights_
+    - Weights are not easily _interpretable_
+      - Why do we get the result we get?
+  ]
+
+  #v(20pt)
+  #note("Can we design a network equally powerful but interpretable?")
+
+  ],
+  [
+    #figure(caption: [Example of a small Multi-Layer Perceptron(MLP) network])[
+      #image(fig_path + "mlp_simple.png", height: 70%) 
+    ]
+  ]
+  )
+]
 
 #slide(title: [Motivation])[
   #grid(
@@ -141,13 +167,13 @@
       ]
     ],
   )
-  @kan-liu2025
+  @liu_kan_2025
 ]
 
 
 #slide(title: [MLP vs KAN: Visual comparison])[
   #figure(
-    image(fig_path + "mlp-vs-kan2.png", height: 90%),
+    image(fig_path + "mlp-vs-kan3.png", height: 90%),
     caption: [MLP vs. KAN visualization (learnable parts in blue, fixed in pink) @serranoacademy_kolmogorov-arnold_2024],
   )
 ]
@@ -168,7 +194,7 @@
       - each edge is a learnable 1D function $phi_(j,i)(x)$
       - Nodes add input → interpret learned functions
 
-      *weights are fixed, functions are learned*
+      *nodes add, function on edges are learned*
     ]
   )
 
@@ -201,12 +227,12 @@
 
         - 1D functions can be approximated very well (e.g., with splines).
       ]
-      #text(size: 12pt)[@kan-liu2025]
+      #text(size: 12pt)[@liu_kan_2025]
     ],
     box(height: 100%)[
       #align(center)[
         // #set text(size: 40pt)
-        #figure(caption: [Kolmogorov-Arnold Theorem@kan-liu2025])[
+        #figure(caption: [Kolmogorov-Arnold Theorem@liu_kan_2025])[
         $
           f(bold(x))= f(x_1, dots, x_n) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p))
         $
@@ -222,7 +248,7 @@
 //   #figure(
 //     caption: [
 //       // #set text(size: 20pt)
-//       If $f$ is a multivariate continuous function,it can be written as a finite composition of cnoninuous functios of a  single variable and addation. (True for $f: [0,1]^n -> RR$, where $Phi q, p: [0,1] -> RR$ and $Phi q: RR -> RR$)@kan-liu2025],
+//       If $f$ is a multivariate continuous function,it can be written as a finite composition of cnoninuous functios of a  single variable and addation. (True for $f: [0,1]^n -> RR$, where $Phi q, p: [0,1] -> RR$ and $Phi q: RR -> RR$)@liu_kan_2025],
 //   )[
 //     #align(center)[
 //       // #set text(size: 30pt)
@@ -234,23 +260,7 @@
 // ]
 
 
-#slide(title: [Can any high-dimensional function be represented by KANs?])[
-  #quote-block()[
-    Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal → hard to learn in practice.
-  ]
-  #v(0.25em)
-  #color-block(title: [Mitigation])[
-    // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
-    // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form → use deeper/wider KANs.
-    // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
-    // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
-    - Don't stick to the rigid depth-2, width $(2n+1)$ form 
-      - use deeper/wider KANs to admit smoother representations.
-    #v(0.8em)
-    - In real tasks we often expect smooth + compositionally sparse structure
-      - most typical cases allow smooth KA-like representations
-  ]
-]
+
 
 #slide(title: [Splines])[
   #v(30pt)
@@ -267,7 +277,7 @@
         //   - Each edge learns its own spline $phi_(j,i)(x)$
         //   - Each requires only a few learnable parameters
         // ]
-      // @kan-liu2025
+      // @liu_kan_2025
     ],
     [
       #figure(
@@ -303,12 +313,12 @@
 
       #v(30pt)
 
-      #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)(x)$. @kan-liu2025]
+      #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)(x)$. @liu_kan_2025]
     ],
     [
       #figure(
         image(fig_path + "spline_notation.png", width: 100%),
-        caption: [Spline notation and grid refinement. @kan-liu2025],
+        caption: [Spline notation and grid refinement. @liu_kan_2025],
       )
     ],
   )
@@ -321,7 +331,7 @@
 //     [
 //       #figure(
 //         image(fig_path + "kan_mlp_shallow.png", width: 100%),
-//         caption: [Shallow MLP vs shallow KAN (Fig. 0.1a,b). @kan-liu2025],
+//         caption: [Shallow MLP vs shallow KAN (Fig. 0.1a,b). @liu_kan_2025],
 //       )
 //       #v(0.25em)
 //       #color-block(title: [Key idea])[
@@ -339,7 +349,7 @@
 //         - KAN / KAT-style:
 //           $ f(bold(x)) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p)) $
 //       ]
-//       #text(size: 11pt)[@kan-liu2025]
+//       #text(size: 11pt)[@liu_kan_2025]
 
 //       //[Connections: fixed vs learnable nonlinearity; inductive bias towards symbolic/compositional structure.]
 //     ],
@@ -352,7 +362,7 @@
 //     [
 //       #figure(
 //         image(fig_path + "kan_mlp_deep.png", width: 100%),
-//         caption: [Deep MLP vs deep KAN (Fig. 0.1c,d). @kan-liu2025],
+//         caption: [Deep MLP vs deep KAN (Fig. 0.1c,d). @liu_kan_2025],
 //       )
 //       #v(0.25em)
 //       #color-block(title: [Deep takeaway])[
@@ -371,7 +381,7 @@
 //         - Deep KAN:
 //           $ "KAN"(bold(x)) = (bold(Phi)_(L-1) compose ... compose bold(Phi)_0)(bold(x)) $
 //       ]
-//       @kan-liu2025
+//       @liu_kan_2025
 
 //       #v(0.2em)
 //       #color-block(title: [Interpretation])[
@@ -382,6 +392,26 @@
 //   )
 // ]
 
+#slide(title: [Can any high-dimensional function be represented by KAT?])[
+  #quote-block()[
+    // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal → hard to learn in practice.
+    Classical KAT is elegant, but the resulting 1D inner functions can be non-smooth or fractal
+      - Hard to learn in 2 Layer MLPs in practice
+      - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
+  ]
+  #v(0.25em)
+  #color-block(title: [Mitigation])[
+    // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
+    // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form → use deeper/wider KANs.
+    // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
+    // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
+    - Don't stick to the rigid depth-2, width $(2n+1)$ form 
+      - use deeper/wider KANs to admit smoother representations (_Use more than 2 layers_)
+    #v(0.8em)
+    - In real tasks we often expect smooth + compositionally sparse structure
+      - most typical cases allows smooth KA-like representations
+  ]
+]
 
 #slide(title: [UAT vs KAT: what do they guarantee?])[
 ]
@@ -420,7 +450,7 @@
 
         $ f(bold(x)) approx sum_(j=1)^m a_j sigma(bold(w)_j^T bold(x) + b_j) $
 
-        @kan-liu2025
+        @liu_kan_2025
       ]
     ],
     [
@@ -431,7 +461,7 @@
 
         $ f(bold(x)) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p)) $
 
-        @kan-liu2025
+        @liu_kan_2025
       ]
     ],
   )
@@ -440,7 +470,7 @@
   #text(
     size: 12pt,
     fill: gray,
-  )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @kan-liu2025]
+  )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @liu_kan_2025]
 ]
 
 #slide(title: [KAN layer mechanics])[
@@ -452,13 +482,13 @@
       ]
       $ x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i)) $
       $ bold(x)_(l+1) = bold(Phi)_l bold(x)_l $
-      #text(size: 11pt)[@kan-liu2025]
+      #text(size: 11pt)[@liu_kan_2025]
       #v(0.2em)
       #text(size: 16pt)[
         Each edge function is a residual spline:
       ]
       $ phi(x)= w_b b(x) + w_s sum_i c_i B_i(x) $
-      #text(size: 11pt)[@kan-liu2025]
+      #text(size: 11pt)[@liu_kan_2025]
       #v(0.3em)
       #text(size: 12pt, fill: gray)[
         Residual $b(x)$ defaults to SiLU; spline coefficients are trainable.
@@ -468,7 +498,7 @@
     [
       #figure(
         image(fig_path + "spline_notation.png", width: 100%),
-        caption: [B-spline parametrization and grid refinement. @kan-liu2025],
+        caption: [B-spline parametrization and grid refinement. @liu_kan_2025],
       )
     ],
   )
@@ -488,7 +518,7 @@
       - *Grid update:* periodically estimate the activation distribution and *move knot/grid points* to maintain good coverage.
         - non-differentiable reparameterization step).
       - B-splines are a practical choice (locality), but KAN #sym.eq.not splines: other orthogonal bases / global activations are possible.
-      @kan-liu2025
+      @liu_kan_2025
     ],
     [
       // [Connections])[
@@ -503,7 +533,7 @@
 #section-slide(title: [Accuracy & Scaling], subtitle: [How KANs generalize and grow])[
   #figure(
     image(fig_path + "model_scaling.pdf", width: 100%),
-    caption: [Fast scaling trends on structured function classes. @kan-liu2025],
+    caption: [Fast scaling trends on structured function classes. @liu_kan_2025],
   )
 ]
 
@@ -517,13 +547,13 @@
         - Empirically: KANs reach steeper scaling than MLPs on compositional data.
         - Caveat: this advantage assumes the target admits a *smooth compositional* KAN/KAR; we usually do not know this structure a priori.
       ]
-      @kan-liu2025
+      @liu_kan_2025
       // [Connections: scaling laws; approximation theory; bias-variance trade-off.]
     ],
     [
       #figure(
         image(fig_path + "model_scaling.pdf", width: 100%),
-        caption: [Scaling vs MLP baselines. @kan-liu2025],
+        caption: [Scaling vs MLP baselines. @liu_kan_2025],
       )
     ],
   )
@@ -546,7 +576,7 @@
     [
       #figure(
         image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-        caption: [From dense model → sparse graph → symbolic form (schematic). @kan-liu2025],
+        caption: [From dense model → sparse graph → symbolic form (schematic). @liu_kan_2025],
       )
     ],
   )
@@ -562,13 +592,13 @@
         - Produces staircase-like drops in loss after each extension.
         - Improves accuracy without retraining a larger model from scratch.
       ]
-      @kan-liu2025
+      @liu_kan_2025
       // [Connections: model scaling vs training schedules; KAN adds explicit fine-graining.]
     ],
     [
       #figure(
         image(fig_path + "extend_grid.pdf", width: 100%),
-        caption: [Grid extension illustration. @kan-liu2025],
+        caption: [Grid extension illustration. @liu_kan_2025],
       )
     ],
   )
@@ -585,7 +615,7 @@
         - Warm-start: least-squares fit a finer spline to the coarse spline (per edge).
         - Effect: staircase-like loss drops after each refinement; cost grows with grid size.
       ]
-      @kan-liu2025
+      @liu_kan_2025
     ],
     [
       #grid(
@@ -593,13 +623,13 @@
         [
           #figure(
             image(fig_path + "extend_grid_left.png", width: 100%),
-            caption: [Staircase loss drops after each refinement. @kan-liu2025],
+            caption: [Staircase loss drops after each refinement. @liu_kan_2025],
           )
         ],
         [
           #figure(
             image(fig_path + "extend_grid_right.png", width: 100%),
-            caption: [Training time vs grid size. @kan-liu2025],
+            caption: [Training time vs grid size. @liu_kan_2025],
           )
         ],
       )
@@ -616,12 +646,12 @@
         - Special functions + Feynman datasets show strong sample efficiency.
         - Suggests KANs as compact, high-precision function approximators.
       ]
-      @kan-liu2025
+      @liu_kan_2025
     ],
     [
       #figure(
         image(fig_path + "PDE_results.pdf", width: 100%),
-        caption: [PDE benchmark results. @kan-liu2025],
+        caption: [PDE benchmark results. @liu_kan_2025],
       )
     ],
   )
@@ -630,7 +660,7 @@
 #section-slide(title: [Interpretability & Science], subtitle: [From pruning to symbolic laws])[
   #figure(
     image(fig_path + "interpretable_examples_short.png", width: 100%),
-    caption: [Symbolic recovery examples from pruned/simplified KANs. @kan-liu2025],
+    caption: [Symbolic recovery examples from pruned/simplified KANs. @liu_kan_2025],
   )
 ]
 
@@ -646,12 +676,12 @@
           $ y approx c f(a x + b) + d $
           (grid search for $a,b$; linear regression for $c,d$).
       ]
-      @kan-liu2025
+      @liu_kan_2025
     ],
     [
       #figure(
         image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-        caption: [Sparsification + pruning yields simpler, more interpretable KANs. @kan-liu2025],
+        caption: [Sparsification + pruning yields simpler, more interpretable KANs. @liu_kan_2025],
       )
     ],
   )
@@ -667,14 +697,14 @@
         - Grid size $G$ + spline order $k$: resolution vs compute (larger $G$ is slower).
         - Random seeds can reveal different relations in unsupervised discovery.
       ]
-      @kan-liu2025
+      @liu_kan_2025
       #v(0.3em)
       #text(size: 12pt, fill: gray)[Takeaway: interpretability is an objective + design choice, not a byproduct.]
     ],
     [
       #figure(
         image(fig_path + "interpretability_hyperparameters.png", width: 100%),
-        caption: [Dependence on regularization, seeds, and spline resolution. @kan-liu2025],
+        caption: [Dependence on regularization, seeds, and spline resolution. @liu_kan_2025],
       )
     ],
   )
@@ -686,7 +716,7 @@
     [
       #figure(
         image(fig_path + "sr.png", width: 100%),
-        caption: [Interactive workflow for symbolic regression with KANs. @kan-liu2025],
+        caption: [Interactive workflow for symbolic regression with KANs. @liu_kan_2025],
       )
     ],
     [
@@ -696,7 +726,7 @@
         - Set/suggest symbolic forms (manual or assisted).
         - Retrain only affine parameters and export the symbolic formula.
       ]
-      @kan-liu2025
+      @liu_kan_2025
     ],
   )
 ]
@@ -717,7 +747,7 @@
 //     [
 //       #figure(
 //         image(fig_path + "knot_unsupervised.png", width: 100%),
-//         caption: [Knot dataset (unsupervised): rediscovered relations. @kan-liu2025 ],
+//         caption: [Knot dataset (unsupervised): rediscovered relations. @liu_kan_2025 ],
 //       )
 //     ],
 //   )
@@ -739,7 +769,7 @@
     [
       #figure(
         image(fig_path + "mobility_edge.png", width: 100%),
-        caption: [Mobility-edge discovery before/after symbolic snapping. @kan-liu2025],
+        caption: [Mobility-edge discovery before/after symbolic snapping. @liu_kan_2025],
       )
     ],
   )
@@ -755,7 +785,7 @@
         - Debuggable intermediate artifacts: plots of $phi_(l,j,i)$.
         - Works even when the target is not exactly symbolic (splines as fallback).
       ]
-      @kan-liu2025
+      @liu_kan_2025
     ],
     [
       #color-block(title: [Related SR methods])[
@@ -764,7 +794,7 @@
         - NN-based: EQL, OccamNet
         - Program search: PySR
       ]
-      @kan-liu2025
+      @liu_kan_2025
     ],
   )
 ]
@@ -779,13 +809,13 @@
         - Promising for continual or lifelong learning regimes.
         - Trade-off: locality can be computationally expensive; global bases may be faster but lose locality.
       ]
-      @kan-liu2025
+      @liu_kan_2025
       // [Connections: catastrophic forgetting; local adaptation; compute reuse in continual settings.]
     ],
     [
       #figure(
         image(fig_path + "continual_learning.pdf", width: 100%),
-        caption: [Continual learning experiments. @kan-liu2025],
+        caption: [Continual learning experiments. @liu_kan_2025],
       )
     ],
   )
@@ -793,7 +823,7 @@
 
 #slide(title: [Limitations and open questions])[
   #color-block(title: [Practical limits])[
-    - Training is slower (poor batching; no optimized spline kernels). @kan-liu2025
+    - Training is slower (poor batching; no optimized spline kernels). @liu_kan_2025
     - Scaling claims are strongest on structured, low-data scientific tasks.
     - Choosing minimal KAN shapes is still an open design problem (we usually don\'t know the target\'s compositional structure).
     - Can KANs replace MLP blocks in CNNs/Transformers without hardware regressions?
