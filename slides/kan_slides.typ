@@ -554,6 +554,7 @@
       ]],
   )
 ]
+// TODO: add slide on examle fn exp(sin(x1^2 + x2^2)+ sin(x3^2 + x4^2)) - resulting shape.
 
 #slide(title: [Edge Functions - Residual Splines])[
   #grid(
@@ -624,12 +625,11 @@
     gutter: 0.8cm,
     [
       #color-block(title: [Key idea], spacing: 0.55em)[
-        - *Grid extension*: add knots (interanal DoF)\ #sym.arrow.r.l increased spatial fidelity.
+        - *Grid extension*: add knots ($G$ #sym.arrow.r $G'$) #sym.arrow.r higher spline resolution.
         - Curriculum-style schedule:
           1. Start with coarse spatial resolution -- fewer knots, global structure, simpler optimization.
           2. Gradually increase resolution, initialize finer splines via least-squares fit to coarse spline.
 
-        - Initialize finer splines by least-squares fit to coarse spline (per edge).
         - Monitor validation error to stop grid extension once improvement ceases.
         // - Validation-guided capacity scheduling: stop grid extension once validation error stops improving.
       ]
@@ -653,6 +653,16 @@
         image(fig_path + "extend_grid_left.png", width: 100%),
         caption: [Staircase-like loss drops after each grid refinement. @liu_kan_2025],
       )
+      #v(0.4em)
+      #text(size: 12pt)[
+        $
+          \{c'_j\} =
+          op("argmin")_(\{c'_j\})
+          E_(x ~ p(x))
+          (sum_(j=0)^(G_2+k-1) c'_j B'_j(x) - sum_(i=0)^(G_1+k-1) c_i B_i(x))^2
+        $
+      ]
+      #text(size: 11pt)[@liu_kan_2025]
     ],
   )
 ]
