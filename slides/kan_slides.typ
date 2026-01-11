@@ -667,234 +667,128 @@
   )
 ]
 
-#section-slide(title: [Interpretability & philosophy])[
-  #figure(
-    image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-    caption: [From dense KAN → sparse graph → symbolic form (schematic). @liu_kan_2025],
-  )
-]
-
-#warning-note(
-  "Training and optimization tricks - REMOVE THIS? - Sure its important, but not really to the audience. In case anyone ever wants to make a KAN, they will read the paper anyway or? Feels like a bit too detailed to be useful",
-)
-
-#slide(title: [Training and optimization tricks])[
-  #grid(
-    columns: 2,
-    [
-
-      - *Residual activations:*
-        $
-          phi(bold(x))=w_b b(bold(x))+w_s "spline"bold((x))
-        $
-        + well-defined outputs outside spline grid
-        + simplified optimization target
-      - *Grid update:* periodically estimate the activation distribution and *move knot/grid points* to maintain good coverage.
-        - non-differentiable reparameterization step).
-      - B-splines are a practical choice (locality), but KAN #sym.eq.not splines: other orthogonal bases / global activations are possible.
-      @liu_kan_2025
-    ],
-    [
-      // [Connections])[
-      // - Initialization and stability in deep networks
-      // - Loss landscapes and optimization schedules
-      // - Bias-variance trade-off when increasing capacity
-      // ]
-    ],
-  )
-]
+// #section-slide(title: [Interpretability & philosophy])[
+//   #figure(
+//     image(fig_path + "toy_interpretability_evolution.png", width: 100%),
+//     caption: [From dense KAN → sparse graph → symbolic form (schematic). @liu_kan_2025],
+//   )
+// ]
 
 // TODO: computational complexity of KAN vs MLP.
 
 
-#section-slide(title: [Accuracy & Scaling], subtitle: [How KANs generalize and grow])[
-  #figure(
-    image(fig_path + "model_scaling.pdf", width: 100%),
-    caption: [Fast scaling trends on structured function classes. @liu_kan_2025],
-  )
-]
+// #section-slide(title: [Accuracy & Scaling], subtitle: [How KANs generalize and grow])[
+//   #figure(
+//     image(fig_path + "model_scaling.pdf", width: 100%),
+//     caption: [Fast scaling trends on structured function classes. @liu_kan_2025],
+//   )
+// ]
 
-#slide(title: [Scaling laws])[
-  #grid(
-    columns: 2,
-    [
-      #figure(
-        image(fig_path + "model_scaling.pdf", width: 80%),
-        caption: [Scaling vs MLP baselines. @liu_kan_2025],
-      )
-      #color-block(title: [Theory + observation])[
-        - Smooth-KAT bound: $|f - "KAN"_G| <= C G^(-(k+1))$ (cubic: $k=3 -> alpha approx 4$).
-        - Comparison: manifold view ($alpha approx (k+1)/d$) vs arity view ($alpha approx (k+1)/2$).
-        - Empirically: KANs reach steeper scaling than MLPs on compositional data.
-        - Caveat: this advantage assumes the target admits a *smooth compositional* KAN/KAR; we usually do not know this structure a priori.
-      ]
-      @liu_kan_2025
-      // [Connections: scaling laws; approximation theory; bias-variance trade-off.]
-    ],
-    [
-      #figure(
-        image(fig_path + "model_scaling.pdf", width: 100%),
-        caption: [Scaling vs MLP baselines. @liu_kan_2025],
-      )
-    ],
-  )
-]
+// #slide(title: [Scaling laws])[
+//   #grid(
+//     columns: 2,
+//     [
+//       #figure(
+//         image(fig_path + "model_scaling.pdf", width: 80%),
+//         caption: [Scaling vs MLP baselines. @liu_kan_2025],
+//       )
+//       #color-block(title: [Theory + observation])[
+//         - Smooth-KAT bound: $|f - "KAN"_G| <= C G^(-(k+1))$ (cubic: $k=3 -> alpha approx 4$).
+//         - Comparison: manifold view ($alpha approx (k+1)/d$) vs arity view ($alpha approx (k+1)/2$).
+//         - Empirically: KANs reach steeper scaling than MLPs on compositional data.
+//         - Caveat: this advantage assumes the target admits a *smooth compositional* KAN/KAR; we usually do not know this structure a priori.
+//       ]
+//       @liu_kan_2025
+//       // [Connections: scaling laws; approximation theory; bias-variance trade-off.]
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "model_scaling.pdf", width: 100%),
+//         caption: [Scaling vs MLP baselines. @liu_kan_2025],
+//       )
+//     ],
+//   )
+// ]
 
-#slide(title: [Why symbolic extraction matters (beyond "post-hoc")])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [From fit → formula])[
-        - Goal: not only predict, but *compress* knowledge into a symbolic law.
-        - This turns supervised learning into a form of *scientific discovery*:
-          we obtain an explicit equation that can be checked, generalized, and reused.
-        - KANs help because intermediate artifacts are readable: 1D edge functions $phi(\cdot)$.
-      ]
-      #quote-block[
-        Interpretability is not an afterthought here; it is an explicit objective.
-      ]
-    ],
-    [
-      #figure(
-        image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-        caption: [From dense model → sparse graph → symbolic form (schematic). @liu_kan_2025],
-      )
-    ],
-  )
-]
+// #slide(title: [Why symbolic extraction matters])[
+//   #grid(
+//     columns: 2,
+//     [
+//       #color-block(title: [From fit → formula])[
+//         - Goal: not only predict, but *compress* knowledge into a symbolic law.
+//         - This turns supervised learning into a form of *scientific discovery*:
+//           we obtain an explicit equation that can be checked, generalized, and reused.
+//         - KANs help because intermediate artifacts are readable: 1D edge functions $phi(\cdot)$.
+//       ]
+//       #quote-block[
+//         Interpretability is not an afterthought here; it is an explicit objective.
+//       ]
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "toy_interpretability_evolution.png", width: 100%),
+//         caption: [From dense model → sparse graph → symbolic form (schematic). @liu_kan_2025],
+//       )
+//     ],
+//   )
+// ]
 
-#slide(title: [Grid extension: fine-grain without retraining])[
-  #grid(
-    columns: (2fr, 3fr),
-    [
-      #color-block(title: [Key idea])[
-        - Start with coarse grids, then refine spline knots.
-        - Initialize finer grids by least-squares fit to the coarse spline.
-        - Produces staircase-like drops in loss after each extension.
-        - Improves accuracy without retraining a larger model from scratch.
-      ]
-      @liu_kan_2025
-      // [Connections: model scaling vs training schedules; KAN adds explicit fine-graining.]
-    ],
-    [
-      #figure(
-        image(fig_path + "extend_grid.pdf", width: 100%),
-        caption: [Grid extension illustration. @liu_kan_2025],
-      )
-    ],
-  )
-]
 
-#slide(title: [Grid extension: why it works])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [Why grid extension works])[
-        - External dofs: graph structure (width/depth) learns compositional structure.
-        - Internal dofs: spline grid points learn 1D functions precisely.
-        - Grid extension: increase internal dofs without re-initializing.
-        - Warm-start: least-squares fit a finer spline to the coarse spline (per edge).
-        - Effect: staircase-like loss drops after each refinement; cost grows with grid size.
-      ]
-      @liu_kan_2025
-    ],
-    [
-      #grid(
-        columns: 2,
-        [
-          #figure(
-            image(fig_path + "extend_grid_left.png", width: 100%),
-            caption: [Staircase loss drops after each refinement. @liu_kan_2025],
-          )
-        ],
-        [
-          #figure(
-            image(fig_path + "extend_grid_right.png", width: 100%),
-            caption: [Training time vs grid size. @liu_kan_2025],
-          )
-        ],
-      )
-    ],
-  )
-]
+// #section-slide(title: [Interpretability & Science], subtitle: [From pruning to symbolic laws])[
+//   #figure(
+//     image(fig_path + "interpretable_examples_short.png", width: 100%),
+//     caption: [Symbolic recovery examples from pruned/simplified KANs. @liu_kan_2025],
+//   )
+// ]
 
-#slide(title: [Accuracy results: PDEs and scientific fitting])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [Results])[
-        - PDE solving: Poisson equation solved with smaller KANs at higher accuracy.
-        - Special functions + Feynman datasets show strong sample efficiency.
-        - Suggests KANs as compact, high-precision function approximators.
-      ]
-      @liu_kan_2025
-    ],
-    [
-      #figure(
-        image(fig_path + "PDE_results.pdf", width: 100%),
-        caption: [PDE benchmark results. @liu_kan_2025],
-      )
-    ],
-  )
-  // ],
-  // )
-]
+// #slide(title: [Interpretability toolkit: sparsify, prune, symbolify])[
+//   #grid(
+//     columns: 2,
+//     [
+//       #color-block(title: [Four steps to a formula])[
+//         - Sparsify: encourage few active edges (L1 + entropy).
+//         - Visualize: inspect learned 1D edge functions $phi_(l,j,i)$.
+//         - Prune: drop inactive nodes to a minimal shape $[n_0, ..., n_L]$.
+//         - Symbolify: snap splines to analytic forms with an affine wrapper
+//           $ y approx c f(a x + b) + d $
+//           (grid search for $a,b$; linear regression for $c,d$).
+//       ]
+//       @liu_kan_2025
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "toy_interpretability_evolution.png", width: 100%),
+//         caption: [Sparsification + pruning yields simpler, more interpretable KANs. @liu_kan_2025],
+//       )
+//     ],
+//   )
 
-#section-slide(title: [Interpretability & Science], subtitle: [From pruning to symbolic laws])[
-  #figure(
-    image(fig_path + "interpretable_examples_short.png", width: 100%),
-    caption: [Symbolic recovery examples from pruned/simplified KANs. @liu_kan_2025],
-  )
-]
+// ]
 
-#slide(title: [Interpretability toolkit: sparsify, prune, symbolify])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [Four steps to a formula])[
-        - Sparsify: encourage few active edges (L1 + entropy).
-        - Visualize: inspect learned 1D edge functions $phi_(l,j,i)$.
-        - Prune: drop inactive nodes to a minimal shape $[n_0, ..., n_L]$.
-        - Symbolify: snap splines to analytic forms with an affine wrapper
-          $ y approx c f(a x + b) + d $
-          (grid search for $a,b$; linear regression for $c,d$).
-      ]
-      @liu_kan_2025
-    ],
-    [
-      #figure(
-        image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-        caption: [Sparsification + pruning yields simpler, more interpretable KANs. @liu_kan_2025],
-      )
-    ],
-  )
+// #slide(title: [Interpretability: hyperparameters matter])[
+//   #grid(
+//     columns: (1fr, 1.25fr),
+//     [
+//       #color-block(title: [What changes (and why)])[
+//         - Entropy regularization: encourages sparse, readable graphs.
+//         - $lambda$: sparsity-accuracy trade-off; too small → dense, too large → underfit.
+//         - Grid size $G$ + spline order $k$: resolution vs compute (larger $G$ is slower).
+//         - Random seeds can reveal different relations in unsupervised discovery.
+//       ]
+//       @liu_kan_2025
+//       #v(0.3em)
+//       #text(size: 12pt, fill: gray)[Takeaway: interpretability is an objective + design choice, not a byproduct.]
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "interpretability_hyperparameters.png", width: 100%),
+//         caption: [Dependence on regularization, seeds, and spline resolution. @liu_kan_2025],
+//       )
+//     ],
+//   )
+// ]
 
-]
-
-#slide(title: [Interpretability: hyperparameters matter])[
-  #grid(
-    columns: (1fr, 1.25fr),
-    [
-      #color-block(title: [What changes (and why)])[
-        - Entropy regularization: encourages sparse, readable graphs.
-        - $lambda$: sparsity-accuracy trade-off; too small → dense, too large → underfit.
-        - Grid size $G$ + spline order $k$: resolution vs compute (larger $G$ is slower).
-        - Random seeds can reveal different relations in unsupervised discovery.
-      ]
-      @liu_kan_2025
-      #v(0.3em)
-      #text(size: 12pt, fill: gray)[Takeaway: interpretability is an objective + design choice, not a byproduct.]
-    ],
-    [
-      #figure(
-        image(fig_path + "interpretability_hyperparameters.png", width: 100%),
-        caption: [Dependence on regularization, seeds, and spline resolution. @liu_kan_2025],
-      )
-    ],
-  )
-]
-
-#slide(title: [Interactive symbolification])[
+#slide(title: [Sparsification & Symbolification])[
   #grid(
     columns: (2fr, 1fr),
     [
@@ -904,13 +798,12 @@
       )
     ],
     [
-      #color-block(title: [What the user does])[
+      #color-block(title: [Step-wise symbolification])[
         - Train with sparsification.
         - Prune to a minimal graph.
         - Set/suggest symbolic forms (manual or assisted).
         - Retrain only affine parameters and export the symbolic formula.
       ]
-      @liu_kan_2025
     ],
   )
 ]
@@ -937,52 +830,30 @@
 //   )
 // ]
 
-#slide(title: [Case study (physics): mobility edges via KANs])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [From data to an order parameter])[
-        - Goal: learn the mobility edge separating localized vs extended phases.
-        - Localization metric (eigenstate $bold(psi)^(k)$):
-          $ "IPR"_k = (sum_n |psi_n^(k)|^4) / (sum_n |psi_n^(k)|^2)^2 $
-          $ D_k = - log("IPR"_k) / log(N) $
-        - Train → sparsify/prune → symbolify to recover a compact boundary $g(·)=0$
-          (human-in-the-loop: constrain the symbol library).
-      ]
-    ],
-    [
-      #figure(
-        image(fig_path + "mobility_edge.png", width: 100%),
-        caption: [Mobility-edge discovery before/after symbolic snapping. @liu_kan_2025],
-      )
-    ],
-  )
-]
+// #slide(title: [Case study (physics): mobility edges via KANs])[
+//   #grid(
+//     columns: 2,
+//     [
+//       #color-block(title: [From data to an order parameter])[
+//         - Goal: learn the mobility edge separating localized vs extended phases.
+//         - Localization metric (eigenstate $bold(psi)^(k)$):
+//           $ "IPR"_k = (sum_n |psi_n^(k)|^4) / (sum_n |psi_n^(k)|^2)^2 $
+//           $ D_k = - log("IPR"_k) / log(N) $
+//         - Train → sparsify/prune → symbolify to recover a compact boundary $g(·)=0$
+//           (human-in-the-loop: constrain the symbol library).
+//       ]
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "mobility_edge.png", width: 100%),
+//         caption: [Mobility-edge discovery before/after symbolic snapping. @liu_kan_2025],
+//       )
+//     ],
+//   )
+// ]
 
-#slide(title: [Symbolic regression: KANs vs classic SR])[
-  #grid(
-    columns: (1fr, 1fr),
-    gutter: 0.8cm,
-    [
-      #color-block(title: [Why KANs help])[
-        - Continuous search in function space (gradients) before snapping to symbols.
-        - Debuggable intermediate artifacts: plots of $phi_(l,j,i)$.
-        - Works even when the target is not exactly symbolic (splines as fallback).
-      ]
-      @liu_kan_2025
-    ],
-    [
-      #color-block(title: [Related SR methods])[
-        - Genetic / heuristic: Eureqa
-        - Physics-inspired: AI Feynman
-        - NN-based: EQL, OccamNet
-        - Program search: PySR
-      ]
-      @liu_kan_2025
-    ],
-  )
-]
 
+//
 #slide(title: [Continual learning and locality])[
   #grid(
     columns: 2,
@@ -1005,37 +876,26 @@
   )
 ]
 
-#slide(title: [Limitations and open questions])[
-  #color-block(title: [Practical limits])[
-    - Training is slower (poor batching; no optimized spline kernels). @liu_kan_2025
-    - Scaling claims are strongest on structured, low-data scientific tasks.
-    - Choosing minimal KAN shapes is still an open design problem (we usually don\'t know the target\'s compositional structure).
-    - Can KANs replace MLP blocks in CNNs/Transformers without hardware regressions?
-  ]
-  // [Connections: throughput vs parameter count; hardware efficiency vs expressivity.]
-]
 
+
+//  TODO: split into takeaways and limitations color-block
 #slide(title: [Summary + discussion prompts])[
   #color-block(title: [Takeaways])[
-    - KANs move nonlinearity to edges, learning 1D functions directly.
-    - Grid extension + spline parametrization yield strong accuracy/scaling.
-    - Sparsification enables symbolic interpretability (white-box ML).
+    - Training is slower (non-optimized acceleration HW). @liu_kan_2025
+    - KANs are most suited for structured, compositional, low-data scientific tasks.
+    // - KANs move nonlinearity to edges, learning 1D functions directly.
+    - Grid extension allows good finetuning and steerable representation capacity.
+    - Sparsification enables symbolic interpretability and discovery of symbolic formulas (white-box ML).
     - Trade-off: better accuracy/interpretability vs slower training.
-  ]
-
-  #color-block(title: [Questions for the track])[
-    - Where would KANs beat MLPs (e.g., scientific regression, PDEs, transformer MLP blocks)?
-    - What hardware/software advances would make KANs practical?
-    - How should we evaluate interpretability vs performance for science?
   ]
 ]
 
-#warning-note([
-  Why are KANS not yet used in production if they offer that much benefit in many scenarios?
-  - Framework support
-  - Not much industrial know how
-  - Is there something else?
-])
+// #warning-note([
+//   Why are KANS not yet used in production if they offer that much benefit in many scenarios?
+//   - Framework support
+//   - Not much industrial know how
+//   - Is there something else?
+// ])
 
 #slide(title: [References])[
   #set text(size: 9pt)
