@@ -9,7 +9,6 @@
 #show: definitely-not-isec-theme.with(
   aspect-ratio: "16-9",
   slide-alignment: top,
-  font: "Roboto",
   progress-bar: false,
   institute: [Munich University of Applied Sciences],
   logo: [#image(fig_path + "hm-logo.svg", width: 2cm)],
@@ -881,6 +880,8 @@
 //  TODO: split into takeaways and limitations color-block
 #slide(title: [Summary + discussion prompts])[
   #color-block(title: [Takeaways])[
+
+    // TODO: w
     - Training is slower (non-optimized acceleration HW). @liu_kan_2025
     - KANs are most suited for structured, compositional, low-data scientific tasks.
     // - KANs move nonlinearity to edges, learning 1D functions directly.
