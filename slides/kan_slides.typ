@@ -1,6 +1,3 @@
-// KAN deep-dive slides (initial comprehensive draft)
-
-#import "@preview/definitely-not-isec-slides:1.0.1": *
 #import "template.typ": *
 #import "notes.typ": *
 
@@ -62,7 +59,7 @@
 
 #title-slide(
   title: [Kolmogorov-Arnold Networks],
-  subtitle: [],
+  subtitle: [#image(fig_path + "kan-intro-flowchart.png", height: 5.2cm)],
 )
 
 // DO WE WANT A TOC?
@@ -119,15 +116,16 @@
     [
       #color-block(title: [Why KANs can work well])[
         - Built for smooth + compositional relationships
-        - Matches structure common in physics / biology 
+        - Matches structure common in physics / biology
       ]
-    ], 
+    ],
     [
       #color-block(title: [Efficiency on scientific tasks])[
         - Often similar error with fewer parameters than MLP baselines
         - Especially in regression / PDE-style benchmarks
       ]
     ],
+
     [
       #color-block(title: [Interpretability])[
         - Each connection is a learned 1D function
@@ -157,7 +155,8 @@
   //   - MLP: scalar weights $w_(j,i)$ on edges; fixed activation $sigma$ on nodes.
   // ]
 
-  #grid(columns: 2,
+  #grid(
+    columns: 2,
     color-block(title: [MLP])[
       - scalar weights $w_(j,i)$ on edges
       - fixed activation functions $sigma$ on nodes
@@ -169,7 +168,7 @@
       - Nodes add input → interpret learned functions
 
       *weights are fixed, functions are learned*
-    ]
+    ],
   )
 
   #set align(bottom)
@@ -207,10 +206,10 @@
       #align(center)[
         // #set text(size: 40pt)
         #figure(caption: [Kolmogorov-Arnold Theorem@kan-liu2025])[
-        $
-          f(bold(x))= f(x_1, dots, x_n) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p))
-        $
-      ]]
+          $
+            f(bold(x))= f(x_1, dots, x_n) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p))
+          $
+        ]]
       #v(50pt)
       #good-note([*Simple splines can approximate high-dimensional functions*])
     ],
@@ -244,7 +243,7 @@
     // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form → use deeper/wider KANs.
     // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
     // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
-    - Don't stick to the rigid depth-2, width $(2n+1)$ form 
+    - Don't stick to the rigid depth-2, width $(2n+1)$ form
       - use deeper/wider KANs to admit smoother representations.
     #v(0.8em)
     - In real tasks we often expect smooth + compositionally sparse structure
@@ -257,16 +256,16 @@
   #grid(
     columns: (1fr, 1fr),
     [
-        - Smooth *piecewise-polynomial* functions of one variable $x$.
+      - Smooth *piecewise-polynomial* functions of one variable $x$.
 
-        - Controlled by knots + coefficients → flexible local curves.
-        - Approximate 1D functions well with few parameters.
+      - Controlled by knots + coefficients → flexible local curves.
+      - Approximate 1D functions well with few parameters.
 
-        #v(30pt)
-        // #color-block(title: [Splines in KANs])[
-        //   - Each edge learns its own spline $phi_(j,i)(x)$
-        //   - Each requires only a few learnable parameters
-        // ]
+      #v(30pt)
+      // #color-block(title: [Splines in KANs])[
+      //   - Each edge learns its own spline $phi_(j,i)(x)$
+      //   - Each requires only a few learnable parameters
+      // ]
       // @kan-liu2025
     ],
     [
@@ -443,62 +442,171 @@
   )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @kan-liu2025]
 ]
 
-#slide(title: [KAN layer mechanics])[
+// <MERGE: KAN layer section (3 slides)>
+#slide(title: [KAN layer (definition + shape)])[
   #grid(
-    columns: 2,
+    columns: (1.4fr, 0.95fr),
+    gutter: 0.8cm,
     [
-      #text(size: 16pt)[
-        Each layer is a matrix of learnable 1D functions:
-      ]
-      $ x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i)) $
-      $ bold(x)_(l+1) = bold(Phi)_l bold(x)_l $
-      #text(size: 11pt)[@kan-liu2025]
-      #v(0.2em)
-      #text(size: 16pt)[
-        Each edge function is a residual spline:
-      ]
-      $ phi(x)= w_b b(x) + w_s sum_i c_i B_i(x) $
-      #text(size: 11pt)[@kan-liu2025]
-      #v(0.3em)
-      #text(size: 12pt, fill: gray)[
-        Residual $b(x)$ defaults to SiLU; spline coefficients are trainable.
-        Local B-spline basis → localized updates → potentially less catastrophic forgetting (continual learning intuition).
+      #color-block(title: [Layer = matrix of 1D functions], spacing: 0.5em)[
+        - Each edge learns a univariate function
+        $ phi_(l,j,i): RR -> RR. $
+
+        - Activation of the $j$-th neuron in layer $l+1$: // as sum of incoming signals
+
+        $ x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i)) $
+
+        // - $n_l$ nodes in layer $l$ (shape $[n_0, dots, n_L]$).\
+        //   Indices: $i$ input, $j$ output.
+        - A single KAN layer can be written in *matrix form*:
+
+        #text(size: 16pt)[
+          $
+            bold(x)_(l+1) =
+            underbrace(
+              mat(
+                phi_(l,1,1)(dot.c), phi_(l,1,2)(dot.c), dots, phi_(l,1,n_l)(dot.c);
+                phi_(l,2,1)(dot.c), phi_(l,2,2)(dot.c), dots, phi_(l,2,n_l)(dot.c);
+                dots.v, dots.v, , dots.v;
+                phi_(l,n_(l+1),1)(dot.c), phi_(l,n_(l+1),2)(dot.c), dots, phi_(l,n_(l+1),n_l)(dot.c)
+              ),
+              #v(0.5cm) #text(size: 26pt)[$bold(Phi)_l in (RR -> RR)^(n_(l+1) times n_l)$]
+            )
+            bold(x)_l
+            \
+          $
+        ]
+
       ]
     ],
     [
       #figure(
-        image(fig_path + "spline_notation.png", width: 100%),
-        caption: [B-spline parametrization and grid refinement. @kan-liu2025],
+        image(fig_path + "spline_notation_kan_only.png", width: 60%),
+        caption: text(size: 12pt, fill: gray)[B-spline parametrization and grid refinement. @kan-liu2025],
+      )
+
+      #color-block(title: [General KAN with $L$ layers])[#text(size: 16pt)[
+          $
+            "KAN"(bold(x)) =
+            (bold(Phi)_(L-1) compose bold(Phi)_(L-2) compose dots compose bold(Phi)_0)(bold(x))\
+          $
+          KART #sym.image KAN of shape $[n arrow.r 2n+1 arrow.r 1]$
+        ]
+      ]],
+  )
+]
+
+#slide(title: [Edge Functions - Residual Splines])[
+  #grid(
+    columns: (1.05fr, 0.95fr),
+    gutter: 0.8cm,
+    [
+      #color-block(title: [Edge - Residual Spline], spacing: 0.55em)[
+        $ phi(x) = w_b b(x) + w_s sum_i c_i B_i(x) $
+
+        - Trainable (per edge, backprop): $c_i$, $w_b$, $w_s$
+        - $B_(i)(x)$: B-spline basis functions (fixed *given the current knot grid*).
+        - $b(x)$: fixed *global* non-linearity
+          #v(0.1em)
+          #text(size: 16pt)[
+            1. Ensure $phi$ is well-defined on $RR$
+            2. Residual path eases optimization -- learn deviation from $b(x)$ rather than full function
+          ]
+      ]
+    ],
+    [
+      #figure(
+        image(fig_path + "silu_minimal.svg", width: 62%),
+        caption: [SiLU base function $b(x)$.],
+      )
+      #color-block(title: [Why splines?])[
+        - *local*, *translation-invariant* \
+          #text(size: 15pt)[
+            - local capacity allocation \
+            - continual learning #sym.arrow.t
+            - catastrophic forgetting #sym.arrow.b
+          ]
+        - Allows for other basis functions (Fourier, Chebyshev)
+        - Locality #sym.arrow.l.r global efficiency.
+      ]
+    ],
+  )
+]
+
+#slide(title: [Grid Update - Knot Relocation])[
+  #grid(
+    columns: (1fr, 1fr),
+    gutter: 0.2cm,
+    [
+      #color-block(title: [Keep knots where the data lives], spacing: 0.55em)[
+        - Activations are *non-stationary* during training, but splines live on a bounded grid.
+        - Grid update: periodically estimate activation distributions and *move knots* to maintain coverage (e.g., via quantiles).
+        - Not by backprop: *non-differentiable reparameterization*
+      ]
+      #figure(
+        image(fig_path + "two_gaussians_drift_minimal.svg", width: 60%),
+        caption: text(size: 12pt)[Activation drift motivates knot relocation.],
+      )
+    ],
+    [
+      #figure(
+        image(fig_path + "spline_notation_grid_extension.jpg", width: 80%),
+      )
+      // #text(size: 15pt)[
+      #quote-block[
+        _Grid updates_ reallocate representational capacity at *fixed number of knots* (contrast: grid extension adds knots).
+      ]
+    ],
+  )
+]
+#slide(title: [Grid Extension: Curriculum over Spatial Resolution])[
+  #grid(
+    columns: (1fr, 0.8fr),
+    gutter: 0.8cm,
+    [
+      #color-block(title: [Key idea], spacing: 0.55em)[
+        - *Grid extension*: add knots (interanal DoF)\ #sym.arrow.r.l increased spatial fidelity.
+        - Curriculum-style schedule:
+          1. Start with coarse spatial resolution -- fewer knots, global structure, simpler optimization.
+          2. Gradually increase resolution, initialize finer splines via least-squares fit to coarse spline.
+
+        - Initialize finer splines by least-squares fit to coarse spline (per edge).
+        - Monitor validation error to stop grid extension once improvement ceases.
+        // - Validation-guided capacity scheduling: stop grid extension once validation error stops improving.
+      ]
+
+      // TODO: page on Internal vs External DOF!
+      // #color-block(title: [Why this works], spacing: 0.55em)[
+      //   - Two kinds of capacity:
+      //     - *External DOF*: width/depth → learns **compositional structure**.
+      //     - *Internal DOF*: spline grid → learns **1D function precision**.
+      //   - Grid extension increases *internal* DOF only.
+      //   - Warm start: finer splines are initialized by least-squares fitting the coarse spline (per edge).
+      // ]
+
+      // #quote-block[
+      //   Interpretation: grid extension is *adaptive mesh refinement* in function space.
+      // ]
+
+    ],
+    [
+      #figure(
+        image(fig_path + "extend_grid_left.png", width: 100%),
+        caption: [Staircase-like loss drops after each grid refinement. @kan-liu2025],
       )
     ],
   )
 ]
 
-#slide(title: [Training and optimization tricks])[
-  #grid(
-    columns: 2,
-    [
-
-      - *Residual activations:*
-        $
-          phi(bold(x))=w_b b(bold(x))+w_s "spline"bold((x))
-        $
-        + well-defined outputs outside spline grid
-        + simplified optimization target
-      - *Grid update:* periodically estimate the activation distribution and *move knot/grid points* to maintain good coverage.
-        - non-differentiable reparameterization step).
-      - B-splines are a practical choice (locality), but KAN #sym.eq.not splines: other orthogonal bases / global activations are possible.
-      @kan-liu2025
-    ],
-    [
-      // [Connections])[
-      // - Initialization and stability in deep networks
-      // - Loss landscapes and optimization schedules
-      // - Bias-variance trade-off when increasing capacity
-      // ]
-    ],
+#section-slide(title: [Interpretability & philosophy])[
+  #figure(
+    image(fig_path + "toy_interpretability_evolution.png", width: 100%),
+    caption: [From dense KAN → sparse graph → symbolic form (schematic). @kan-liu2025],
   )
 ]
+
+// TODO: computational complexity of KAN vs MLP.
+
 
 #section-slide(title: [Accuracy & Scaling], subtitle: [How KANs generalize and grow])[
   #figure(
@@ -511,20 +619,19 @@
   #grid(
     columns: 2,
     [
+      #figure(
+        image(fig_path + "model_scaling.pdf", width: 80%),
+        caption: [Scaling vs MLP baselines. @kan-liu2025],
+      )
       #color-block(title: [Theory + observation])[
         - Smooth-KAT bound: $|f - "KAN"_G| <= C G^(-(k+1))$ (cubic: $k=3 -> alpha approx 4$).
         - Comparison: manifold view ($alpha approx (k+1)/d$) vs arity view ($alpha approx (k+1)/2$).
         - Empirically: KANs reach steeper scaling than MLPs on compositional data.
         - Caveat: this advantage assumes the target admits a *smooth compositional* KAN/KAR; we usually do not know this structure a priori.
       ]
-      @kan-liu2025
       // [Connections: scaling laws; approximation theory; bias-variance trade-off.]
     ],
     [
-      #figure(
-        image(fig_path + "model_scaling.pdf", width: 100%),
-        caption: [Scaling vs MLP baselines. @kan-liu2025],
-      )
     ],
   )
 ]
@@ -554,7 +661,7 @@
 
 #slide(title: [Grid extension: fine-grain without retraining])[
   #grid(
-    columns: 2,
+    columns: (2fr, 3fr),
     [
       #color-block(title: [Key idea])[
         - Start with coarse grids, then refine spline knots.
@@ -567,7 +674,9 @@
     ],
     [
       #figure(
-        image(fig_path + "extend_grid.pdf", width: 100%),
+        [
+          #image(fig_path + "extend_grid_left.png", width: 95%)
+        ],
         caption: [Grid extension illustration. @kan-liu2025],
       )
     ],
@@ -608,23 +717,23 @@
 ]
 
 #slide(title: [Accuracy results: PDEs and scientific fitting])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [Results])[
-        - PDE solving: Poisson equation solved with smaller KANs at higher accuracy.
-        - Special functions + Feynman datasets show strong sample efficiency.
-        - Suggests KANs as compact, high-precision function approximators.
-      ]
-      @kan-liu2025
-    ],
-    [
-      #figure(
-        image(fig_path + "PDE_results.pdf", width: 100%),
-        caption: [PDE benchmark results. @kan-liu2025],
-      )
-    ],
+  // #grid(
+  //   columns: 2,
+  //   [
+  //     #color-block(title: [Results])[
+  //       - PDE solving: Poisson equation solved with smaller KANs at higher accuracy.
+  //       - Special functions + Feynman datasets show strong sample efficiency.
+  //       - Suggests KANs as compact, high-precision function approximators.
+  //     ]
+  //     @kan-liu2025
+  //   ],
+  // [
+  #figure(
+    image(fig_path + "PDE_results.pdf", width: 100%),
+    caption: [PDE benchmark results. @kan-liu2025],
   )
+  // ],
+  // )
 ]
 
 #section-slide(title: [Interpretability & Science], subtitle: [From pruning to symbolic laws])[
@@ -635,26 +744,20 @@
 ]
 
 #slide(title: [Interpretability toolkit: sparsify, prune, symbolify])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [Four steps to a formula])[
-        - Sparsify: encourage few active edges (L1 + entropy).
-        - Visualize: inspect learned 1D edge functions $phi_(l,j,i)$.
-        - Prune: drop inactive nodes to a minimal shape $[n_0, ..., n_L]$.
-        - Symbolify: snap splines to analytic forms with an affine wrapper
-          $ y approx c f(a x + b) + d $
-          (grid search for $a,b$; linear regression for $c,d$).
-      ]
-      @kan-liu2025
-    ],
-    [
-      #figure(
-        image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-        caption: [Sparsification + pruning yields simpler, more interpretable KANs. @kan-liu2025],
-      )
-    ],
+
+  #color-block(title: [Four steps to a formula])[
+    1. Sparsify: encourage few active edges (L1 + entropy).
+    2. Visualize: inspect learned 1D edge functions $phi_(l,j,i)$.
+    3. Prune: drop inactive nodes to a minimal shape $[n_0, ..., n_L]$.
+    4. Symbolify: snap splines to analytic forms with an affine wrapper
+      $ y approx c f(a x + b) + d $
+      (grid search for $a,b$; linear regression for $c,d$).
+  ]
+  #figure(
+    image(fig_path + "toy_interpretability_evolution.png", width: 100%),
+    caption: [Sparsification + pruning yields simpler, more interpretable KANs. @kan-liu2025],
   )
+
 ]
 
 #slide(title: [Interpretability: hyperparameters matter])[
@@ -680,9 +783,9 @@
   )
 ]
 
-#slide(title: [Interactive symbolification (toy example)])[
+#slide(title: [Interactive symbolification])[
   #grid(
-    columns: (1.15fr, 1fr),
+    columns: (2fr, 1fr),
     [
       #figure(
         image(fig_path + "sr.png", width: 100%),
@@ -701,49 +804,7 @@
   )
 ]
 
-// #slide(title: [Case study (math): knot invariants (unsupervised)])[
-//   #grid(
-//     columns: (1fr, 1.25fr),
-//     gutter: 0.8cm,
-//     [
-//       #color-block(title: [Unsupervised discovery idea])[
-//         - Goal: discover sparse relations among many invariants (not just predict one target).
-//         - Train a sparse classifier KAN (shape $[18, 1, 1]$).
-//         - Fix the last activation to a Gaussian peak at 0 ⇒ positives satisfy
-//           $ sum_(i=1)^18 g_i(x_i) approx 0 $ (read $g_i$ off learned edges).
-//         - Sweep seeds + $lambda$ and cluster multiple discovered relations.
-//       ]
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "knot_unsupervised.png", width: 100%),
-//         caption: [Knot dataset (unsupervised): rediscovered relations. @kan-liu2025 ],
-//       )
-//     ],
-//   )
-// ]
 
-#slide(title: [Case study (physics): mobility edges via KANs])[
-  #grid(
-    columns: 2,
-    [
-      #color-block(title: [From data to an order parameter])[
-        - Goal: learn the mobility edge separating localized vs extended phases.
-        - Localization metric (eigenstate $bold(psi)^(k)$):
-          $ "IPR"_k = (sum_n |psi_n^(k)|^4) / (sum_n |psi_n^(k)|^2)^2 $
-          $ D_k = - log("IPR"_k) / log(N) $
-        - Train → sparsify/prune → symbolify to recover a compact boundary $g(·)=0$
-          (human-in-the-loop: constrain the symbol library).
-      ]
-    ],
-    [
-      #figure(
-        image(fig_path + "mobility_edge.png", width: 100%),
-        caption: [Mobility-edge discovery before/after symbolic snapping. @kan-liu2025],
-      )
-    ],
-  )
-]
 
 #slide(title: [Symbolic regression: KANs vs classic SR])[
   #grid(
@@ -818,10 +879,10 @@
 
 #warning-note([
   Why are KANS not yet used in production if they offer that much benefit in many scenarios?
-    - Framework support
-    - Not much industrial know how
-    - Is there something else?
-  ])
+  - Framework support
+  - Not much industrial know how
+  - Is there something else?
+])
 
 #slide(title: [References])[
   #set text(size: 9pt)
