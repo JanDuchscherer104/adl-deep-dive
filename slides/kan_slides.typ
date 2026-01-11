@@ -397,7 +397,7 @@
 //   )
 // ]
 
-#slide(title: [Can any high-dimensional function be represented by KAT?])[
+#slide(title: [Can KAT represent any high-dimensional function?])[
   #quote-block()[
     // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal → hard to learn in practice.
     Classical KAT is elegant, but the resulting 1D inner functions can be non-smooth or fractal
@@ -575,12 +575,12 @@
     ],
     [
       #figure(
-        image(fig_path + "silu_minimal.svg", width: 62%),
+        image(fig_path + "silu_minimal.svg", width: 60%),
         caption: [SiLU base function $b(x)$.],
       )
       #color-block(title: [Why splines?])[
         - *local*, *translation-invariant* \
-          #text(size: 15pt)[
+          #text(size: 14pt)[
             - local capacity allocation \
             - continual learning #sym.arrow.t
             - catastrophic forgetting #sym.arrow.b
@@ -595,12 +595,12 @@
 #slide(title: [Grid Update - Knot Relocation])[
   #grid(
     columns: (1fr, 1fr),
-    gutter: 0.2cm,
+    gutter: 20pt,
     [
       #color-block(title: [Keep knots where the data lives], spacing: 0.55em)[
-        - Activations are *non-stationary* during training, but splines live on a bounded grid.
-        - Grid update: periodically estimate activation distributions and *move knots* to maintain coverage (e.g., via quantiles).
-        - Not by backprop: *non-differentiable reparameterization*
+        - _Non-stationary_ activations in training, but splines live on bounded grid
+        - #strong[Grid update:] periodically estimate activation distributions; _move knots_ to maintain coverage//(e.g., via quantiles).
+        - Not by backprop: _non-differentiable reparameterization_
       ]
       #figure(
         image(fig_path + "two_gaussians_drift_minimal.svg", width: 60%),
@@ -879,16 +879,34 @@
 
 //  TODO: split into takeaways and limitations color-block
 #slide(title: [Summary + discussion prompts])[
+  #grid(
+    columns: 2,
+    gutter: 30pt,
+    [
   #color-block(title: [Takeaways])[
-
-    // TODO: w
-    - Training is slower (non-optimized acceleration HW). @liu_kan_2025
     - KANs are most suited for structured, compositional, low-data scientific tasks.
+    // TODO: w
     // - KANs move nonlinearity to edges, learning 1D functions directly.
     - Grid extension allows good finetuning and steerable representation capacity.
     - Sparsification enables symbolic interpretability and discovery of symbolic formulas (white-box ML).
-    - Trade-off: better accuracy/interpretability vs slower training.
   ]
+    ],
+    [
+      #color-block(title: [Limitations])[
+        - Training is slower (non-optimized acceleration HW). @liu_kan_2025
+        - Limited framework support
+        - Still a novel concept, paper released in Feb. 2025
+      ]
+
+    ]
+  )
+
+  #v(20pt)
+
+  #quote-block([
+    *Trade-off: better accuracy/interpretability vs slower training*
+  ])
+
 ]
 
 // #warning-note([
