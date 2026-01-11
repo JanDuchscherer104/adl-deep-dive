@@ -160,7 +160,7 @@
     [
       #color-block(title: [From model to equation])[
         - Extract a human readable equation from the trained model
-        #v(52pt)
+        #v(30.8pt)
       ]
     ],
   )
@@ -578,6 +578,7 @@
         image(fig_path + "silu_minimal.svg", width: 62%),
         caption: [SiLU base function $b(x)$.],
       )
+      // TODO: should we move this to the previous section "Splines in KANs"?
       #color-block(title: [Why splines?])[
         - *local*, *translation-invariant* \
           #text(size: 15pt)[
@@ -878,11 +879,11 @@
 
 
 //  TODO: split into takeaways and limitations color-block
-#slide(title: [Summary + discussion prompts])[
+#slide(title: [Summary & Limitations])[
   #color-block(title: [Takeaways])[
 
-    // TODO: w
-    - Training is slower (non-optimized acceleration HW). @liu_kan_2025
+    // TODO:
+    - Training is slower (non-optimized acceleration HW)
     - KANs are most suited for structured, compositional, low-data scientific tasks.
     // - KANs move nonlinearity to edges, learning 1D functions directly.
     - Grid extension allows good finetuning and steerable representation capacity.
