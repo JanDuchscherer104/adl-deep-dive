@@ -499,7 +499,6 @@
 // #warning-note(
 //   "Remove this KAN LAYER MECHANICS SLIDE? Layers are mentioned before, gets quite mathy,is this actually helpful? And we need to cut somewhere",
 // )
-
 // <MERGE: KAN layer section (3 slides)>
 #slide(title: [KAN layer (definition + shape)])[
   #grid(
@@ -675,7 +674,7 @@
 // ]
 
 // TODO: computational complexity of KAN vs MLP.
-
+//
 
 // #section-slide(title: [Accuracy & Scaling], subtitle: [How KANs generalize and grow])[
 //   #figure(
@@ -765,28 +764,6 @@
 
 // ]
 
-// #slide(title: [Interpretability: hyperparameters matter])[
-//   #grid(
-//     columns: (1fr, 1.25fr),
-//     [
-//       #color-block(title: [What changes (and why)])[
-//         - Entropy regularization: encourages sparse, readable graphs.
-//         - $lambda$: sparsity-accuracy trade-off; too small → dense, too large → underfit.
-//         - Grid size $G$ + spline order $k$: resolution vs compute (larger $G$ is slower).
-//         - Random seeds can reveal different relations in unsupervised discovery.
-//       ]
-//       @liu_kan_2025
-//       #v(0.3em)
-//       #text(size: 12pt, fill: gray)[Takeaway: interpretability is an objective + design choice, not a byproduct.]
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "interpretability_hyperparameters.png", width: 100%),
-//         caption: [Dependence on regularization, seeds, and spline resolution. @liu_kan_2025],
-//       )
-//     ],
-//   )
-// ]
 
 #slide(title: [Sparsification & Symbolification])[
   #grid(
