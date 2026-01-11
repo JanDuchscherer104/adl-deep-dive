@@ -134,7 +134,7 @@
   )
 ]
 
-#slide(title: [Motivation])[
+#slide(title: [Features of KANs])[
   #grid(
     columns: 2,
     rows: 2,
@@ -234,9 +234,20 @@
           $
             f(bold(x))= f(x_1, dots, x_n) = sum_(q=1)^(2n+1) Phi_(q)(sum_(p=1)^n phi_(q,p)(x_p))
           $
-        ]]
-      #v(50pt)
-      #good-note([*Simple splines can approximate high-dimensional functions*])
+        ]
+        
+        #v(60pt)
+
+        #figure(caption: [KAT representation example for $x y$\ ($(x + y)^2/2$ requires 1D summary of $t = x + y$)])[
+          #set text(size: 26pt)
+          $x y =  - x^2/2 - y^2/2 + (x+y)^2/2$
+          #v(15pt)
+        ]
+        
+        ]
+
+      // #v(50pt)
+      // #good-note([*Simple splines can approximate high-dimensional functions*])
     ],
   )
 ]
@@ -262,21 +273,27 @@
 #slide(title: [Splines])[
   #v(30pt)
   #grid(
-    columns: (1fr, 1fr),
+    columns: (1.1fr, 1fr),
     [
       - Smooth *piecewise-polynomial* functions of one variable $x$.
 
-      - Controlled by knots + coefficients → flexible local curves.
-      - Approximate 1D functions well with few parameters.
+      - Controlled by knots + coefficients → _flexible local curves_
+      - Approximate 1D functions well with few parameters
 
+      - Spline is bounded to a region
 
-        - Basis Splines (B-Splines)
-          - use a basis function
-            - e.g. const, quadratic, polynomial
-          - bounded to a range of $x$
+      - Fully defined by 3 knots + 2 neighboring knots
 
+      - Each Spline is a combination of many cubic Basis Splines (B-Splines)
+        
 
-        #v(10pt)
+      // - Basis Splines (B-Splines)
+      //   - use a basis function
+      //   - e.g. const, quadratic, polynomial
+      //   - bounded to a range of $x$
+
+      // - Out of range, a residual function is used
+
       // #color-block(title: [Splines in KANs])[
       //   - Each edge learns its own spline $phi_(j,i)(x)$
       //   - Each requires only a few learnable parameters
@@ -284,10 +301,19 @@
       @liu_kan_2025@serranoacademy_kolmogorov-arnold_2024
     ],
     [
+      // #figure(
+      //   // image(fig_path + "spline (1).png", width: 100%),
+      //   caption: [Constant B-Splines example\ (simplest type of basis splines)],
+      // )
+
       #figure(
-        image(fig_path + "spline (1).png", width: 100%),
-        caption: [Constant B-Splines example\ (simplest type of basis splines)],
+        image(fig_path + "spline_notation.png", width: 100%),
+        caption: [Each edge function is a combination of many cubic B-Splines  @liu_kan_2025],
       )
+
+      #v(20pt)
+
+      #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)(x)$. @liu_kan_2025]
     ],
   )
 ]
@@ -307,27 +333,27 @@
 //   )
 // ]
 
-#slide(title: [Splines in KANs])[
-  #grid(
-    columns: 2,
-    gutter: 30pt,
-    [
-      - Smooth *piecewise-polynomial* functions of one variable $x$
-      - Controlled by knots + coefficients → flexible local curves
-      - Approximate 1D functions very well with _few parameters_
+// #slide(title: [Splines in KANs])[
+//   #grid(
+//     columns: 2,
+//     gutter: 30pt,
+//     [
+//       - Smooth *piecewise-polynomial* functions of one variable $x$
+//       - Controlled by knots + coefficients → flexible local curves
+//       - Approximate 1D functions very well with _few parameters_
 
-      #v(30pt)
+//       #v(30pt)
 
-      #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)(x)$. @liu_kan_2025]
-    ],
-    [
-      #figure(
-        image(fig_path + "spline_notation.png", width: 100%),
-        caption: [Spline notation and grid refinement. @liu_kan_2025],
-      )
-    ],
-  )
-]
+//       #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)(x)$. @liu_kan_2025]
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "spline_notation.png", width: 100%),
+//         caption: [Spline notation and grid refinement. @liu_kan_2025],
+//       )
+//     ],
+//   )
+// ]
 
 // I think the nonlinearity is sufficiently introduced in earlier slides already
 // #slide(title: [MLP vs KAN (shallow): where does nonlinearity live?])[
@@ -400,7 +426,7 @@
 #slide(title: [Can KAT represent any high-dimensional function?])[
   #quote-block()[
     // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal → hard to learn in practice.
-    Classical KAT is elegant, but the resulting 1D inner functions can be non-smooth or fractal
+    Classical KAT is elegant, but resulting 1D inner functions can be non-smooth or fractal
     - Hard to learn in 2 Layer MLPs in practice
     - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
   ]
@@ -418,10 +444,6 @@
   ]
 ]
 
-#slide(title: [UAT vs KAT: what do they guarantee?])[
-]
-
-
 #slide(title: [Curse of Dimensionality])[
   #quote-block()[more input dimensions -> combinations explode -> exponential growth of parameters]
 
@@ -432,7 +454,7 @@
 
   ===== KANs
   - _Stack layers_ to learn compositional structure (feature learning)
-  - Replace weights with learnable 1D functions (B-spline activations)
+  - Replace weights with learnable 1D functions
   - No high-D spline grid:
     - many _1D splines + sums_, can beat CoD when the target is _smooth + compositional_
 ]
@@ -664,6 +686,34 @@
       #text(size: 11pt)[@liu_kan_2025]
     ],
   )
+]
+
+#slide(title: [Scaling & Accuracy: MLPs vs. KANs])[
+
+
+#grid(columns: 2, gutter: 30pt,
+box(height: 90%)[
+#color-block(title: [MLPs: External DoF = *structure*])[
+  - Width, depth, connectivity
+  - Determines which variables interact and in what hierarchy
+  - Encodes compositional structure
+
+]
+#set align(bottom+center)
+#good-note([To get more accuracy, we make the whole network bigger])
+],
+box(height: 90%)[
+#color-block(title: [ KANs : internal DoF = *precision*])[
+- Parameters that refine a fixed structure.
+- In KANs: spline coefficients + knot resolution.
+- Encodes *how accurately* each subfunction is represented.
+
+]
+#set align(bottom+center)
+
+#good-note([First get the structure right; then sharpen the parts.])
+]
+)
 ]
 
 // #section-slide(title: [Interpretability & philosophy])[
