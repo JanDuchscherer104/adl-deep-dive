@@ -144,14 +144,14 @@
     rows: 2,
     [
       #color-block(title: [Why KANs can work well])[
-        - Built for smooth + compositional relationships
+        - Built for _smooth + compositional_ relationships
         - Matches structure common in physics / biology 
       ]
     ], 
     [
       #color-block(title: [Efficiency on scientific tasks])[
         - Often similar error with fewer parameters than MLP baselines
-        - Especially in regression / PDE-style benchmarks
+        - Function fitting and differential-equation solving (common in science)
       ]
     ],
     [
@@ -162,8 +162,8 @@
     ],
     [
       #color-block(title: [From model to equation])[
-        - Learned curves can be snapped to simple functions
-        - Helps symbolic regression / equation discovery
+        - Extract a human readable equation from the trained model
+      #v(52pt)
       ]
     ],
   )
@@ -272,17 +272,24 @@
         - Controlled by knots + coefficients → flexible local curves.
         - Approximate 1D functions well with few parameters.
 
-        #v(30pt)
+
+        - Basis Splines (B-Splines)
+          - use a basis function
+            - e.g. const, quadratic, polynomial
+          - bounded to a range of $x$
+          
+
+        #v(10pt)
         // #color-block(title: [Splines in KANs])[
         //   - Each edge learns its own spline $phi_(j,i)(x)$
         //   - Each requires only a few learnable parameters
         // ]
-      // @liu_kan_2025
+      @liu_kan_2025@serranoacademy_kolmogorov-arnold_2024
     ],
     [
       #figure(
         image(fig_path + "spline (1).png", width: 100%),
-        caption: [Constant B-Splines example\ (simplest type of splines)],
+        caption: [Constant B-Splines example\ (simplest type of basis splines)],
       )
     ],
   )
@@ -306,6 +313,7 @@
 #slide(title: [Splines in KANs])[
   #grid(
     columns: 2,
+    gutter: 30pt,
     [
       - Smooth *piecewise-polynomial* functions of one variable $x$
       - Controlled by knots + coefficients → flexible local curves
@@ -416,6 +424,23 @@
 #slide(title: [UAT vs KAT: what do they guarantee?])[
 ]
 
+
+#slide(title: [Curse of Dimensionality])[
+  #quote-block()[more input dimensions -> combinations explode -> exponential growth of parameters]
+
+  ===== MLPs
+    - Universal Approximation Theorem: 2-layer MLP can _approximate any continuous f_
+    - But no efficiency guarantee
+      - _width_ can grow _exponentially_ with dimension (CoD in practice)
+
+  ===== KANs
+    - _Stack layers_ to learn compositional structure (feature learning)
+    - Replace weights with learnable 1D functions (B-spline activations)
+    - No high-D spline grid: 
+      - many _1D splines + sums_, can beat CoD when the target is _smooth + compositional_
+]
+
+/*
 #slide(title: [Curse of dimensionality: where the pain shows up])[
   #grid(
     columns: (1fr, 1fr),
@@ -472,6 +497,9 @@
     fill: gray,
   )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @liu_kan_2025]
 ]
+*/
+
+#warning-note("Remove this KAN LAYER MECHANICS SLIDE? Layers are mentioned before, gets quite mathy,is this actually helpful? And we need to cut somewhere")
 
 #slide(title: [KAN layer mechanics])[
   #grid(
@@ -503,6 +531,8 @@
     ],
   )
 ]
+
+#warning-note("Training and optimization tricks - REMOVE THIS? - Sure its important, but not really to the audience. In case anyone ever wants to make a KAN, they will read the paper anyway or? Feels like a bit too detailed to be useful")
 
 #slide(title: [Training and optimization tricks])[
   #grid(
