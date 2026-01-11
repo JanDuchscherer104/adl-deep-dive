@@ -497,9 +497,9 @@
 ]
 */
 
-#warning-note(
-  "Remove this KAN LAYER MECHANICS SLIDE? Layers are mentioned before, gets quite mathy,is this actually helpful? And we need to cut somewhere",
-)
+// #warning-note(
+//   "Remove this KAN LAYER MECHANICS SLIDE? Layers are mentioned before, gets quite mathy,is this actually helpful? And we need to cut somewhere",
+// )
 
 // <MERGE: KAN layer section (3 slides)>
 #slide(title: [KAN layer (definition + shape)])[
@@ -656,7 +656,7 @@
       #v(0.4em)
       #text(size: 12pt)[
         $
-          \{c'_j\} =
+          c'_j =
           op("argmin")_(\{c'_j\})
           E_(x ~ p(x))
           (sum_(j=0)^(G_2+k-1) c'_j B'_j(x) - sum_(i=0)^(G_1+k-1) c_i B_i(x))^2
@@ -799,9 +799,9 @@
     ],
     [
       #color-block(title: [Step-wise symbolification])[
-        - Train with sparsification.
+        - Train with sparsification (L1 weight-decay + entropy).
         - Prune to a minimal graph.
-        - Set/suggest symbolic forms (manual or assisted).
+        - Replace splines with suitable symbolic functions.
         - Retrain only affine parameters and export the symbolic formula.
       ]
     ],
