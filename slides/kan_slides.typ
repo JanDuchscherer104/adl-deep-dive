@@ -907,6 +907,7 @@
         // - KANs move nonlinearity to edges, learning 1D functions directly.
         - *Decoupled internal and external DoF* improve fine-tuning, *continual learning* & scaling.
         - *Symbolic interpretability* and discovery of symbolic formulas (*white-box ML*).
+        - Rapid *follow-up ecosystem*: efficiency variants, hybrids, theory, and broad applications.
       ]
     ],
     [
@@ -916,15 +917,16 @@
         - Likely *not an MLP replacement* in large-scale tasks @yu2024kanmlpfairercomparison.
         - Sensitivity to *additional hyperparameters* (grid size, update schedule).
       ]
+      #quote-block([
+        *Trade-off: interpretability & controllable precision vs training efficiency.*
+      ])
 
     ],
   )
 
   #v(20pt)
 
-  #quote-block([
-    *Trade-off: interpretability & controllable precision vs training efficiency.*
-  ])
+
 
 ]
 
