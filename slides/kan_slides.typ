@@ -648,11 +648,14 @@
         - #text(fill: red)[$B_(i)(x)$]: B-spline basis functions, fixed given the current grid.
         - $b(x)$: fixed *global* non-linearity (i.e. SiLU).
           #v(0.1em)
-          #text(size: 16pt)[
+          #text(size: 15pt)[
             1. Ensure $phi$ is well-defined on $RR$
             2. Residual path eases optimization -- learn deviation from $b(x)$ rather than full function
           ]
       ]
+      #figure(
+        image(fig_path + "silu_minimal.svg", width: 50%),
+      )
     ],
     [
       #figure(
@@ -715,13 +718,13 @@
         - _non-differentiable_ reparameterization
       ]
       #figure(
-        image(fig_path + "two_gaussians_drift_minimal.svg", width: 72%),
+        image(fig_path + "two_gaussians_drift_minimal.svg", width: 92%),
         caption: text(size: 12pt)[Non-stationarity motivates knot relocation.],
       )
     ],
     [
       #figure(
-        image(fig_path + "spline_notation_grid_extension.jpg", width: 73%),
+        image(fig_path + "spline_notation_grid_extension.jpg", width: 80%),
         caption: [@liu_kan_2025],
       )
       // #text(size: 15pt)[
@@ -731,6 +734,9 @@
     ],
   )
 ]
+
+
+
 #slide(title: [Grid Extension: Accuracy Scaling])[
   #grid(
     columns: (1fr, 0.8fr),
