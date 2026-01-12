@@ -463,7 +463,7 @@
     - Hard to learn in 2 Layer MLPs in practice
     - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
   ]
-  #v(0.25em)
+  #v(30pt)
   #color-block(title: [Mitigation])[
     // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
     // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form → use deeper/wider KANs.
