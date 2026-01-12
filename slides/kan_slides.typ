@@ -226,7 +226,8 @@
     ],
   )
 
-  #v(0.35em)
+  #v(0.32em)
+  #place(left+bottom)[@liu_kan_2025]
   #align(horizon + center)[
     #good-note([
       Same dense bipartite wiring.
@@ -234,7 +235,6 @@
       Activations become learnable & move from nodes to edges.
     ])
   ]
-  @liu_kan_2025
 ]
 
 // #slide(title: [From MLPs to Kolmogorov-Arnold Networks (KANs)])[
@@ -428,18 +428,32 @@
     - Hard to learn in the rigid depth-2 KART form in practice
     - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
   ]
-  #v(30pt)
-  #color-block(title: [Mitigation])[
+  // #v(30pt)
+
+  #grid(
+    columns: (2.0fr, 1fr),
+    gutter: 30pt,
+    [
+ #color-block(title: [Mitigation])[
     // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
     // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form #sym.arrow.r use deeper/wider KANs.
     // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
     // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
     - Don't stick to the rigid depth-2, width $(2n+1)$ form
-      - use deeper/wider KANs to admit smoother representations (_Use more than 2 layers_)
-    #v(0.8em)
+      - deeper/wider KANs for smoother representations
+    #v(0.5em)
     - In real tasks we often expect smooth + compositionally sparse structure
       - most typical cases allows smooth KA-like representations
   ]
+    ],[
+      #figure(
+        caption: [Smooth vs Fractal Curves visualization]
+      )[
+        #image("figures/smoothvsfractal.png")
+      ]
+    ]
+  )
+ 
 ]
 
 #slide(title: [Curse of Dimensionality])[
@@ -613,7 +627,7 @@
 
 #slide(title: [Grid Update - Knot Relocation])[
   #grid(
-    columns: (1.2fr, 1.4fr),
+    columns: (1.3fr, 1.3fr),
     [
       #color-block(title: [Keep knots where the data lives], spacing: 0.55em)[
         - _Non-stationary_ activations in training, but splines live on bounded grid
