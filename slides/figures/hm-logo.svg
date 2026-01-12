@@ -1,4 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="768" height="289.5" viewBox="0 0 768 289.5">
-<path fill-rule="nonzero" fill="rgb(98.822021%, 33.332825%, 33.332825%)" fill-opacity="1" d="M 281.582031 8.195312 L 281.582031 281.304688 L 312.949219 281.304688 L 312.949219 41.851562 L 313.710938 41.851562 L 404.5625 281.304688 L 431.328125 281.304688 L 522.1875 41.851562 L 522.949219 41.851562 L 522.949219 281.304688 L 554.6875 281.304688 L 554.6875 8.195312 L 505.734375 8.195312 L 419.472656 238.464844 L 418.722656 238.464844 L 332.453125 8.195312 Z M 725.386719 8.195312 L 622.96875 42.332031 L 657.105469 144.75 L 759.527344 110.613281 Z M 8.472656 8.199219 L 8.472656 281.304688 L 41.367188 281.304688 L 41.367188 156.222656 L 203.171875 156.222656 L 203.171875 281.304688 L 236.0625 281.304688 L 236.0625 8.199219 L 203.171875 8.199219 L 203.171875 128.6875 L 41.367188 128.6875 L 41.367188 8.199219 Z M 8.472656 8.199219 "/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="751.05469"
+   height="273.10938"
+   viewBox="0 0 751.05469 273.10938"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="hm-logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <path
+     fill-rule="nonzero"
+     fill="#fc5555"
+     fill-opacity="1"
+     d="m 273.10937,0 v 273.10938 h 31.36719 V 33.65625 h 0.76172 l 90.85156,239.45313 h 26.76562 L 513.71484,33.65625 h 0.76172 v 239.45313 h 31.73828 V 0 H 497.26171 L 411,230.26953 h -0.75 L 323.98046,0 Z M 716.91406,0 614.49609,34.136719 648.63281,136.55469 751.05468,102.41797 Z M 0,0.003907 V 273.10938 H 32.894532 V 148.02735 H 194.69921 v 125.08203 h 32.89063 V 0.003907 H 194.69921 V 120.49219 H 32.894532 V 0.003907 Z m 0,0"
+     id="path1" />
 </svg>
