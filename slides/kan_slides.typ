@@ -515,7 +515,7 @@
   )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @liu_kan_2025]
 ]
 */
-#slide(title: [KAN layer (definition + shape)])[
+#slide(title: [KAN layer])[
   #grid(
     columns: (1.4fr, 0.95fr),
     gutter: 0.8cm,
@@ -738,14 +738,14 @@
     gutter: 30pt,
     [
       #color-block(title: [Why KANs forget less])[
-        - *Local plasticity:* Each spline basis has *local support* \
+        - *Local plasticity:* Each spline basis is local: \
           #sym.arrow.r only a few basis functions are non-zero per sample \
           #sym.arrow.r gradients touch only a few nearby coefficients. \
-          #sym.arrow.r updates are localized.
-        - *Contrast (MLPs):* Any local update has global effects \
+          #sym.arrow.r _updates are localized_.
+        - *Contrast (MLPs):* Any local update has global effects: \
           #sym.arrow.r learning a new task may overwrite previous knowledge \
-          #sym.arrow.r catastrophic forgetting.
-        - Locality in high dimensions is unclear.
+          #sym.arrow.r _catastrophic forgetting_.
+        - Generalization to higher dimensions is unclear @yu2024kanmlpfairercomparison.
       ]
     ],
     [
@@ -783,7 +783,8 @@
         // grid search for $a,b$; linear regression for $c,d$
         + *Symbolify*: replace splines with analytic forms + affine wrapper
           $ y approx c f(a x + b) + d $
-          #sym.arrow.r internal DoF #sym.arrow.b
+          #sym.arrow.r internal DoF #sym.arrow.b.
+        + *Further training* of the (affine) parameters.
       ]
     ],
   )
@@ -799,15 +800,16 @@
       #color-block(title: [Takeaways])[
         - KANs are most suited for *structured, compositional, small-scale scientific tasks*.
         // - KANs move nonlinearity to edges, learning 1D functions directly.
-        - *Decoupled internal and external DoF* enable improved fine-tuning, *continual learning* & scaling.
-        - Sparsification enables symbolic interpretability and discovery of symbolic formulas (*white-box ML*).
+        - *Decoupled internal and external DoF* improve fine-tuning, *continual learning* & scaling.
+        - *Symbolic interpretability* and discovery of symbolic formulas (*white-box ML*).
       ]
     ],
     [
       #color-block(title: [Limitations])[
-        - Training is up to $10 times$ slower (lack of optimized HW, batching). @liu_kan_2025
-        -
-        - Still a novel concept, paper released in Feb. 2025
+        - Baseline KANs are up to 10x *slower* (batching, spline updates, HW); faster follow-ups exist @li2024kolmogorovarnoldnetworksradialbasis.
+        // - Still a novel concept, paper released in Feb. 2025
+        - Likely not an MLP replacement in large-scale tasks @yu2024kanmlpfairercomparison.
+        - Sensitivity to additional hyperparameters (grid size, update schedule).
       ]
 
     ],
@@ -816,7 +818,7 @@
   #v(20pt)
 
   #quote-block([
-    *Trade-off: better accuracy/interpretability vs slower training*
+    *Trade-off: interpretability & controllable precision vs training efficiency.*
   ])
 
 ]
