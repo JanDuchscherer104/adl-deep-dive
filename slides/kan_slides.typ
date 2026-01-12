@@ -226,7 +226,8 @@
     ],
   )
 
-  #v(0.35em)
+  #v(0.32em)
+  #place(left + bottom)[@liu_kan_2025]
   #align(horizon + center)[
     #good-note([
       Same dense bipartite wiring.
@@ -234,7 +235,6 @@
       Activations become learnable & move from nodes to edges.
     ])
   ]
-  @liu_kan_2025
 ]
 
 // #slide(title: [From MLPs to Kolmogorov-Arnold Networks (KANs)])[
@@ -428,18 +428,33 @@
     - Hard to learn in the rigid depth-2 KART form in practice
     - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
   ]
-  #v(30pt)
-  #color-block(title: [Mitigation])[
-    // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
-    // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form #sym.arrow.r use deeper/wider KANs.
-    // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
-    // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
-    - Don't stick to the rigid depth-2, width $(2n+1)$ form
-      - use deeper/wider KANs to admit smoother representations (_Use more than 2 layers_)
-    #v(0.8em)
-    - In real tasks we often expect smooth + compositionally sparse structure
-      - most typical cases allows smooth KA-like representations
-  ]
+  // #v(30pt)
+
+  #grid(
+    columns: (2.0fr, 1fr),
+    gutter: 30pt,
+    [
+      #color-block(title: [Mitigation])[
+        // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
+        // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form #sym.arrow.r use deeper/wider KANs.
+        // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
+        // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
+        - Don't stick to the rigid depth-2, width $(2n+1)$ form
+          - deeper/wider KANs for smoother representations
+        #v(0.5em)
+        - In real tasks we often expect smooth + compositionally sparse structure
+          - most typical cases allows smooth KA-like representations
+      ]
+    ],
+    [
+      #figure(
+        caption: [Smooth vs Fractal Curves visualization],
+      )[
+        #image("figures/kat_pathology_irregular_vs_smooth.svg", width: 110%)
+      ]
+    ],
+  )
+
 ]
 
 #slide(title: [Curse of Dimensionality])[
@@ -516,60 +531,108 @@
 ]
 */
 #slide(title: [KAN Layer])[
-  #grid(
-    columns: (1.4fr, 0.95fr),
-    gutter: 0.8cm,
-    [
-      #color-block(title: [Layer = matrix of 1D functions], spacing: 0.5em)[
-        - Each edge learns a univariate function
-        $ phi_(l,j,i): RR -> RR. $
+  #block(height: 100%)[
+    #grid(
+      columns: (1.25fr, 1fr),
+      gutter: 0.8cm,
+      [
+        #color-block(title: [Layer = matrix of 1D functions], spacing: 0.5em)[
+          - Each edge learns a univariate mapping
+          $ phi_(l,j,i): RR -> RR. $
 
-        - Activation of the $j$-th neuron in layer $l+1$: // as sum of incoming signals
+          - Activation of the $j$-th neuron in layer $l+1$: // as sum of incoming signals
 
-        $
-          x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i))
-        $
-
-        // - $n_l$ nodes in layer $l$ (shape $[n_0, dots, n_L]$).\
-        //   Indices: $i$ input, $j$ output.
-        - A single KAN layer can be written in *matrix form*:
-
-        #text(size: 16pt)[
           $
-            bold(x)_(l+1) =
-            underbrace(
-              mat(
-                phi_(l,1,1)(dot.c), phi_(l,1,2)(dot.c), dots, phi_(l,1,n_l)(dot.c);
-                phi_(l,2,1)(dot.c), phi_(l,2,2)(dot.c), dots, phi_(l,2,n_l)(dot.c);
-                dots.v, dots.v, , dots.v;
-                phi_(l,n_(l+1),1)(dot.c), phi_(l,n_(l+1),2)(dot.c), dots, phi_(l,n_(l+1),n_l)(dot.c)
-              ),
-              #v(0.5cm) #text(size: 26pt)[$bold(Phi)_l in (RR -> RR)^(n_(l+1) times n_l)$]
-            )
-            bold(x)_l
-            \
+            x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i))
           $
+
+          // - $n_l$ nodes in layer $l$ (shape $[n_0, dots, n_L]$).\
+          //   Indices: $i$ input, $j$ output.
+          - A single KAN layer can be written in *matrix form*:
+
+          #text(size: 16pt)[
+            $
+              bold(x)_(l+1) =
+              underbrace(
+                mat(
+                  phi_(l,1,1)(dot.c), phi_(l,1,2)(dot.c), dots, phi_(l,1,n_l)(dot.c);
+                  phi_(l,2,1)(dot.c), phi_(l,2,2)(dot.c), dots, phi_(l,2,n_l)(dot.c);
+                  dots.v, dots.v, , dots.v;
+                  phi_(l,n_(l+1),1)(dot.c), phi_(l,n_(l+1),2)(dot.c), dots, phi_(l,n_(l+1),n_l)(dot.c)
+                ),
+                #v(0.5cm) #text(size: 26pt)[$bold(Phi)_l in (RR -> RR)^(n_(l+1) times n_l)$]
+              )
+              bold(x)_l
+              \
+            $
+          ]
         ]
-
-      ]
-    ],
-    [
-      #figure(
-        image(fig_path + "spline_notation_kan_only.png", width: 60%),
-        caption: text(size: 12pt, fill: gray)[B-spline parametrization and grid refinement. @liu_kan_2025],
-      )
-
-      #color-block(title: [General KAN with $L$ layers])[#text(size: 16pt)[
-          $
-            "KAN"(bold(x)) =
-            (bold(Phi)_(L-1) compose bold(Phi)_(L-2) compose dots compose bold(Phi)_0)(bold(x))\
-          $
-          KART #sym.image KAN of shape $[n arrow.r 2n+1 arrow.r 1]$
+      ],
+      [
+        #block(height: 100%)[
+          #grid(
+            columns: 1,
+            rows: (1fr, auto),
+            gutter: 0.55cm,
+            [
+              #align(center + horizon)[
+                #figure(
+                  image(fig_path + "spline_notation_kan_only.png", height: 55%),
+                  caption: text(size: 11pt, fill: gray)[B-spline parametrization and grid refinement. @liu_kan_2025],
+                )
+                #align(center + horizon)[
+                  #figure(
+                    image(fig_path + "kan_function_matrix.svg", width: 65%),
+                    caption: text(size: 11pt, fill: gray)[KAN layer in matrix form],
+                  )
+                ]
+              ]
+            ],
+            [
+              #color-block(title: [General KAN with $L$ layers], spacing: 0.45em)[
+                #text(size: 16pt)[
+                  $
+                    "KAN"(bold(x)) =
+                    (bold(Phi)_(L-1) compose bold(Phi)_(L-2) compose dots compose bold(Phi)_0)(bold(x))\
+                  $
+                  KART #sym.image KAN of shape $[n arrow.r 2n+1 arrow.r 1]$
+                ]
+              ]
+            ],
+          )
         ]
-      ]],
-  )
+      ],
+    )
+  ]
 ]
 // TODO: add slide on examle fn exp(sin(x1^2 + x2^2)+ sin(x3^2 + x4^2)) - resulting shape.
+
+// #slide(title: [KAN Layer: Function Matrix Intuition])[
+//   #block(height: 100%)[
+//     #grid(
+//       columns: (1.25fr, 1fr),
+//       gutter: 0.8cm,
+//       [
+
+//       ],
+//       [
+//         #align(center + horizon)[
+//           #color-block(title: [How to read this], spacing: 0.55em)[
+//             - Input vector $bold(x)_l$ enters the layer.
+//             - Each entry $phi_(l,j,i)$ maps one scalar $x_(l,i)$ to one scalar.
+//             - Neuron $j$ sums incoming transformed scalars:
+//               #align(center)[
+//                 #text(size: 22pt)[
+//                   $ x_(l+1,j) = sum_i phi_(l,j,i)(x_(l,i)). $
+//                 ]
+//               ]
+//             - The learnable object is a *matrix of functions* (not a weight matrix).
+//           ]
+//         ]
+//       ],
+//     )
+//   ]
+// ]
 
 #slide(title: [Edge Functions - Residual Splines])[
   #grid(
@@ -593,27 +656,58 @@
     ],
     [
       #figure(
-        image(fig_path + "silu_minimal.svg", width: 60%),
-        caption: [SiLU base function $b(x)$.],
+        image(fig_path + "kan_residual_spline.svg", width: 100%),
+        caption: text(
+          size: 11pt,
+          fill: gray,
+        )[Residual spline edge function: local basis #sym.arrow.r spline #sym.arrow.r $phi(x)$.],
       )
       // TODO: should we move this to the previous section "Splines in KANs"?
-      #color-block(title: [Why B-Splines?])[
-        - *local*, *translation-invariant* \
-          #text(size: 14pt)[
-            - local capacity allocation \
-            - continual learning #sym.arrow.t
-            - catastrophic forgetting #sym.arrow.b
-          ]
-        - Allows for other basis functions (Fourier, Chebyshev).
-        - Locality #sym.arrow.l.r global efficiency.
+      #text(size: 15pt)[
+        #color-block(title: [Why B-Splines?])[
+          - *local*, *translation-invariant* basis \
+            #text(size: 14pt)[
+              - local capacity allocation \
+              - continual learning #sym.arrow.t, catastrophic forgetting #sym.arrow.b
+            ]
+          - Allows for other orthogonal bases (Fourier, Chebyshev).
+          - Locality #sym.arrow.l.r global efficiency.
+        ]
       ]
     ],
   )
 ]
 
+// #slide(title: [Grid Update vs Grid Extension])[
+//   #grid(
+//     columns: (1.3fr, 1.3fr),
+//     [
+//       #color-block(title: [Two spline adaptation mechanisms], spacing: 0.55em)[
+//         - *Grid update*: relocate existing knots to follow activations (fixed $G$).
+//         - *Grid extension*: add knots to increase resolution ($G$ #sym.arrow.r $G'$).
+//         - Update keeps the same number of knots; extension increases *internal DoF*.
+//       ]
+//       #v(0.2em)
+//       #good-note([
+//         Update answers “*where* do we need resolution?”\
+//         Extension answers “*how much* resolution do we need?”
+//       ])
+//     ],
+//     [
+//       #figure(
+//         image(fig_path + "kan_grid_update_vs_extension.svg", width: 100%),
+//         caption: text(size: 11pt, fill: gray)[Conceptual comparison: relocation (left) vs refinement (right).],
+//       )
+//     ],
+//   )
+// ]
+
 #slide(title: [Grid Update - Knot Relocation])[
+  // Keep this slide compact to avoid overflow.
+  #set text(size: 17pt)
+
   #grid(
-    columns: (1.2fr, 1.4fr),
+    columns: (1.3fr, 1.3fr),
     [
       #color-block(title: [Keep knots where the data lives], spacing: 0.55em)[
         - _Non-stationary_ activations in training, but splines live on bounded grid
@@ -649,6 +743,7 @@
           2. Gradually increase resolution, initialize finer splines via least-squares fit to coarse spline.
 
         - Monitor validation error to stop grid extension once improvement ceases.
+        - $"RMSE" prop G^(-4)$ #text(size: 12pt)[(on test split)]
       ]
 
       // TODO: page on Internal vs External DOF!
@@ -668,7 +763,11 @@
     [
       #figure(
         image(fig_path + "extend_grid_left.png", width: 100%),
-        caption: [Staircase-like loss drops after each grid refinement. @liu_kan_2025],
+        caption: text(size: 10pt)[Staircase-like loss drops after each grid refinement. @liu_kan_2025],
+      )
+      #v(0.4em)
+      #figure(
+        image(fig_path + "kan_external_vs_internal_dof.svg", width: 40%),
       )
       #v(0.4em)
       #text(size: 14pt)[
