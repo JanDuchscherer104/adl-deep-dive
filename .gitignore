@@ -209,6 +209,5 @@ __marimo__/
 # Typst
 # Typst is a modern markup-based typesetting system for creating slides and documents
 # Ignore compiled PDF outputs and build artifacts
-*.pdf
 .typst-cache/
 typst-cache/
