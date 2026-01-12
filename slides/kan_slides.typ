@@ -83,7 +83,7 @@
 //         - PDEs + scientific fitting
 //       ]
 //       #color-block(title: [Part IV: Interpretability + Critique])[
-//         - Sparsify → prune → symbolify
+//         - Sparsify #sym.arrow.r prune #sym.arrow.r symbolify
 //         - Practical limits and open questions
 //       ]
 //     ],
@@ -214,7 +214,7 @@
     [
       #color-block(title: [KAN])[
         - Each edge is a *learnable 1D function* $phi_(j,i)(x)$
-        - Nodes add input → interpret learned functions.
+        - Nodes add input #sym.arrow.r interpret learned functions.
 
         #v(0.2em)
         #text(size: 16pt)[
@@ -309,7 +309,7 @@
 #slide(title: [Splines])[
   #v(30pt)
   #grid(
-    columns: (1.1fr, 1fr),
+    columns: (1fr, 1fr),
     [
       - *Smooth*, *piecewise-polynomial* & *locally bounded* functions of one variable $x$.
       // - Controlled by by 3 knots + 2 neighboring knots + coefficients.
@@ -341,7 +341,7 @@
 
       #figure(
         image(fig_path + "cubic_bspline_basis_3_nonuniform.svg", width: 100%),
-        caption: [Edge function (dashed): linear combination of $G=3$ B-Splines wiofth degree $k=3$],
+        caption: [Edge function (dashed): linear combination of $G=3$ B-Splines of degree $k=3$],
       )
 
       #v(20pt)
@@ -372,7 +372,7 @@
 //     gutter: 30pt,
 //     [
 //       - Smooth *piecewise-polynomial* functions of one variable $x$
-//       - Controlled by knots + coefficients → flexible local curves
+//       - Controlled by knots + coefficients #sym.arrow.r flexible local curves
 //       - Approximate 1D functions very well with _few parameters_
 
 //       #v(30pt)
@@ -420,45 +420,10 @@
 //   )
 // ]
 
-// #slide(title: [MLP vs KAN (deep): what gets learned?])[
-//   #grid(
-//     columns: (1.25fr, 1fr),
-//     [
-//       #figure(
-//         image(fig_path + "kan_mlp_deep.png", width: 100%),
-//         caption: [Deep MLP vs deep KAN (Fig. 0.1c,d). @liu_kan_2025],
-//       )
-//       #v(0.25em)
-//       #color-block(title: [Deep takeaway])[
-//         - Deep MLPs: learn linear maps $bold(W)_l$; nonlinearity stays fixed.
-//         - Deep KANs: learn function matrices $bold(Phi)_l$ (one 1D function per edge).
-//         - Practical upside: plot/inspect learned edge functions directly.
-//       ]
-//     ],
-//     [
-//       // TODO replace ∘ with poper typst symbol for function composition
-//       #color-block(title: [Deep composition])[
-//         - Deep MLP:
-//           $
-//             "MLP"(bold(x)) = (bold(W)_(L-1) compose sigma compose bold(W)_(L-2) compose ... compose sigma compose bold(W)_0)(bold(x))
-//           $
-//         - Deep KAN:
-//           $ "KAN"(bold(x)) = (bold(Phi)_(L-1) compose ... compose bold(Phi)_0)(bold(x)) $
-//       ]
-//       @liu_kan_2025
-
-//       #v(0.2em)
-//       #color-block(title: [Interpretation])[
-//         - MLP: learn linear maps $bold(W)$; nonlinearity is fixed.
-//         - KAN: learn edge functions $phi_(l,j,i)$; nodes are sums.
-//       ]
-//     ],
-//   )
-// ]
 
 #slide(title: [Can KAT represent any high-dimensional function?])[
   #quote-block()[
-    // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal → hard to learn in practice.
+    // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal #sym.arrow.r hard to learn in practice.
     Classical KAT is elegant, but resulting 1D inner functions can be non-smooth or fractal
     - Hard to learn in 2 Layer MLPs in practice
     - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
@@ -466,7 +431,7 @@
   #v(30pt)
   #color-block(title: [Mitigation])[
     // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
-    // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form → use deeper/wider KANs.
+    // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form #sym.arrow.r use deeper/wider KANs.
     // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
     // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
     - Don't stick to the rigid depth-2, width $(2n+1)$ form
@@ -497,7 +462,7 @@
   #grid(
     columns: (1fr, 1fr),
     [
-      #color-block(title: [MLPs (UAT): existence → not efficiency])[
+      #color-block(title: [MLPs (UAT): existence #sym.arrow.r not efficiency])[
         - UAT is an *existence* guarantee: a shallow MLP can approximate any continuous $f$ on a compact set.
         - It does *not* guarantee dimension-free efficiency: in worst cases, required width / samples can grow exponentially with dimension.
         - Deep nets often help by exploiting *structure* (compositionality / low intrinsic dimension), but this is not automatic.
@@ -509,7 +474,7 @@
     [
       #color-block(title: [KANs (KART): shift the difficulty])[
         - KART suggests reducing multivariate learning to learning many 1D functions.
-        - But the classical 2-layer representation can require *highly non-smooth / fractal* inner functions → hard to learn.
+        - But the classical 2-layer representation can require *highly non-smooth / fractal* inner functions #sym.arrow.r hard to learn.
         - Deep/wide KANs assume a *smooth compositional* representation exists; then each edge is a learnable 1D problem.
       ]
       #quote-block[
@@ -681,14 +646,13 @@
           2. Gradually increase resolution, initialize finer splines via least-squares fit to coarse spline.
 
         - Monitor validation error to stop grid extension once improvement ceases.
-        // - Validation-guided capacity scheduling: stop grid extension once validation error stops improving.
       ]
 
       // TODO: page on Internal vs External DOF!
       // #color-block(title: [Why this works], spacing: 0.55em)[
       //   - Two kinds of capacity:
-      //     - *External DOF*: width/depth → learns **compositional structure**.
-      //     - *Internal DOF*: spline grid → learns **1D function precision**.
+      //     - *External DOF*: width/depth #sym.arrow.r learns **compositional structure**.
+      //     - *Internal DOF*: spline grid #sym.arrow.r learns **1D function precision**.
       //   - Grid extension increases *internal* DOF only.
       //   - Warm start: finer splines are initialized by least-squares fitting the coarse spline (per edge).
       // ]
@@ -717,58 +681,35 @@
 ]
 
 #slide(title: [External vs internal DoF: structure vs precision])[
-  #color-block(title: [Two kinds of degrees of freedom (DoF)], spacing: 0.55em)[
-    - *External DoF*: the computation graph (width / depth / connectivity) → learns *how variables interact*.
-    - *Internal DoF*: resolution inside each 1D function (spline grid $G$, coefficients) → learns *how precisely* a subfunction is represented.
-    - KANs combine both: MLPs have external DoF (no fine-graining); splines have internal DoF (no compositional graph). @liu_kan_2025
+  #color-block(title: [Two kinds of degrees of freedom (DoF)], spacing: 0.45em)[
+    - *External DoF*: width/depth/connectivity #sym.arrow.r *which interactions* among variables.
+    - *Internal DoF*: spline grid $G$ + coefficients #sym.arrow.r *how precisely* each interaction is represented.
+    - *Key shift*: KANs separate structure from precision, so each can scale independently.
   ]
 
+  #v(6pt)
   #grid(
     columns: 2,
     gutter: 30pt,
-    box(height: 70%)[
-      #color-block(title: [MLPs: external DoF dominates], spacing: 0.55em)[
-        - Scaling accuracy usually means increasing width/depth (new graph capacity).
-        - No internal “refinement knob”: node activations are fixed.
-        - Consequence: improving one region can perturb the function globally.
+    [
+      #color-block(title: [MLPs])[
+        - Structure + precision are *entangled*.
+        - More accuracy #sym.arrow.r scale width/depth (external DoF).
+        - No dedicated control over internal DoF.
       ]
-      #set align(center)
-      #good-note([Structure and precision are entangled.])
     ],
-    box(height: 70%)[
-      #color-block(title: [KANs: external + internal DoF], spacing: 0.55em)[
-        - External DoF (graph shape) learns *compositional structure*.
-        - Internal DoF (splines on edges) refines *local precision*.
-        - Grid extension increases internal DoF while keeping the graph fixed. @liu_kan_2025
+    [
+      #color-block(title: [KANs])[
+        - External DoF #sym.arrow.l.r *compositional structure*.
+        - Internal DoF #sym.arrow.l.r *local precision* on edges.
+        - Grid extension increases internal DoF while keeping structure fixed. @liu_kan_2025
       ]
-      #set align(center)
-      #good-note([External structure and internal precision can be scaled separately.])
     ],
   )
 
-  // #v(10pt)
-  // #quote-block[
-  //   Next: simplify *external* DoF via sparsify → prune, then simplify *internal* DoF via symbolification.\
-  //   Bonus: internal DoF are local in input space → local plasticity → less catastrophic forgetting.
-  // ]
 ]
 
-// #section-slide(title: [Interpretability & philosophy])[
-//   #figure(
-//     image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-//     caption: [From dense KAN → sparse graph → symbolic form (schematic). @liu_kan_2025],
-//   )
-// ]
 
-// TODO: computational complexity of KAN vs MLP.
-//
-
-// #section-slide(title: [Accuracy & Scaling], subtitle: [How KANs generalize and grow])[
-//   #figure(
-//     image(fig_path + "model_scaling.pdf", width: 100%),
-//     caption: [Fast scaling trends on structured function classes. @liu_kan_2025],
-//   )
-// ]
 
 // #slide(title: [Scaling laws])[
 //   #grid(
@@ -796,116 +737,6 @@
 //   )
 // ]
 
-// #slide(title: [Why symbolic extraction matters])[
-//   #grid(
-//     columns: 2,
-//     [
-//       #color-block(title: [From fit → formula])[
-//TODO<INCLUDE>
-//         - Goal: not only predict, but *compress* knowledge into a symbolic law.
-//TODO</INCLUDE>
-//         - This turns supervised learning into a form of *scientific discovery*:
-//           we obtain an explicit equation that can be checked, generalized, and reused.
-//         - KANs help because intermediate artifacts are readable: 1D edge functions $phi(\cdot)$.
-//       ]
-//       #quote-block[
-//         Interpretability is not an afterthought here; it is an explicit objective.
-//       ]
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-//         caption: [From dense model → sparse graph → symbolic form (schematic). @liu_kan_2025],
-//       )
-//     ],
-//   )
-// ]
-
-
-// #section-slide(title: [Interpretability & Science], subtitle: [From pruning to symbolic laws])[
-//   #figure(
-//     image(fig_path + "interpretable_examples_short.png", width: 100%),
-//     caption: [Symbolic recovery examples from pruned/simplified KANs. @liu_kan_2025],
-//   )
-// ]
-
-// #slide(title: [Interpretability toolkit: sparsify, prune, symbolify])[
-//   #grid(
-//     columns: 2,
-//     [
-// #color-block(title: [Four steps to a formula])[
-//   - Sparsify: encourage few active edges (L1 + entropy).
-//   - Visualize: inspect learned 1D edge functions $phi_(l,j,i)$.
-//   - Prune: drop inactive nodes to a minimal shape $[n_0, ..., n_L]$.
-//   - Symbolify: snap splines to analytic forms with an affine wrapper
-//     $ y approx c f(a x + b) + d $
-//     (grid search for $a,b$; linear regression for $c,d$).
-// ]
-//       @liu_kan_2025
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "toy_interpretability_evolution.png", width: 100%),
-//         caption: [Sparsification + pruning yields simpler, more interpretable KANs. @liu_kan_2025],
-//       )
-//     ],
-//   )
-
-// ]
-
-
-// #slide(title: [Connectionism ↔ Symbolism])[
-//   #grid(
-//     columns: 3,
-//     gutter: 25pt,
-//     [
-//       #color-block(title: [Connectionism], spacing: 0.55em)[
-//         - Learning via gradient descent.
-//         - Parameters optimized end-to-end.
-//       ]
-//     ],
-//     [
-//       #color-block(title: [Reductionism], spacing: 0.55em)[
-//         - Meaningful intermediate parts.
-//         - Inspectable edge functions.
-//       ]
-//     ],
-//     [
-//       #color-block(title: [Symbolism], spacing: 0.55em)[
-//         - Explicit formulas after training.
-//         - Human-readable scientific laws.
-//         -
-//       ]
-//     ],
-//   )
-
-//   #v(15pt)
-//   #quote-block[
-//     KANs are connectionist during training and symbolic at readout due to their _reductionist_ structure.
-//   ]
-// ]
-
-#slide(title: [Sparsification & Symbolification])[
-  #grid(
-    columns: (2fr, 1fr),
-    [
-      #figure(
-        image(fig_path + "sr.png", width: 100%),
-        caption: [Interactive workflow for symbolic regression with KANs. @liu_kan_2025],
-      )
-    ],
-    [
-      #color-block(title: [Simplify the DoF (structure #sym.arrow.r equation)], spacing: 0.55em)[
-        + *Sparsify* edge functions: L1 penality + entropy regularization.
-        + *Prune* to a minimal shape (discover external structure).
-        + *Symbolify* edge functions: replace splines with $y approx c f(a x + b) + d$.
-        + Retrain only affine parameters and export a symbolic formula (human-in-the-loop). @liu_kan_2025
-      ]
-    ],
-  )
-]
-
-
 
 //
 #slide(title: [Continual learning and locality])[
@@ -914,8 +745,8 @@
     [
       #color-block(title: [Local plasticity])[
         - B-spline bases are local: one sample updates only a few *nearby* spline coefficients.
-        - Previously learned regions stay intact → reduced catastrophic forgetting (toy sequential peaks).
-        - MLPs use global activations (ReLU/Tanh/SiLU): local updates can propagate broadly → interference.
+        - Previously learned regions stay intact #sym.arrow.r reduced catastrophic forgetting (toy sequential peaks).
+        - MLPs use global activations (ReLU/Tanh/SiLU): local updates can propagate broadly #sym.arrow.r interference.
         - Caveat: results are preliminary; “locality” in high dimensions is less clear. @liu_kan_2025
       ]
       // [Connections: catastrophic forgetting; local adaptation; compute reuse in continual settings.]
@@ -931,17 +762,47 @@
 
 
 
-//  TODO: split into takeaways and limitations color-block
-#slide(title: [Summary + discussion prompts])[
+#slide(title: [Reductionist Symbolification])[
+  #grid(
+    columns: (1.9fr, 1.15fr),
+    [
+      #figure(
+        image(fig_path + "sr.png", width: 100%),
+        caption: [Symbolic regression workflow with KANs. @liu_kan_2025],
+      )
+      #quote-block[
+        KANs are _connectionist_ throughout training & _symbolic_ after _reductionist sparsification_ & compression into symbolic forms.
+      ]
+    ],
+    [
+      #color-block(title: [Structure #sym.arrow.r equation])[
+        // “L1 shrinks the graph, entropy decides which edges survive.”
+        // L1 alone pushes total magnitude down, but many small edges remain.
+        // Entropy regularization encourages a few dominant edges.
+        + *Sparsify*: L1 on activations + entropy regularization\
+          #sym.arrow.r few dominant edges.
+        + *Prune* low-importance nodes #sym.arrow.r minimal graph \
+          #sym.arrow.r external DoF #sym.arrow.b.
+        // grid search for $a,b$; linear regression for $c,d$
+        + *Symbolify*: replace splines with analytic forms + affine wrapper
+          $ y approx c f(a x + b) + d $
+          #sym.arrow.r internal DoF #sym.arrow.b
+      ]
+    ],
+  )
+]
+
+
+
+#slide(title: [Summary: Takeaways & Limitations])[
   #grid(
     columns: 2,
     gutter: 30pt,
     [
       #color-block(title: [Takeaways])[
         - KANs are most suited for structured, compositional, low-data scientific tasks.
-        // TODO: w
         // - KANs move nonlinearity to edges, learning 1D functions directly.
-        - Grid extension allows good finetuning and steerable representation capacity.
+        - Separate control over structure vs precision enable improve fine-tuning, continual learning & scaling.
         - Sparsification enables symbolic interpretability and discovery of symbolic formulas (white-box ML).
       ]
     ],
@@ -962,13 +823,6 @@
   ])
 
 ]
-
-// #warning-note([
-//   Why are KANS not yet used in production if they offer that much benefit in many scenarios?
-//   - Framework support
-//   - Not much industrial know how
-//   - Is there something else?
-// ])
 
 #slide(title: [References])[
   #set text(size: 9pt)
