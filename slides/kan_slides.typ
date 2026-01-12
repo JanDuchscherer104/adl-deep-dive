@@ -23,7 +23,7 @@
         align: bottom,
         align(left)[Felix Schladt #sym.dot Jan Duchscherer],
         align(center)[Advanced Deep Learning],
-        align(right)[#datetime.today().display("[day padding:none]. [month repr:short] [year]")],
+        align(right)[#datetime(year: 2026, month: 1, day: 20).display("[day padding:none]. [month repr:short] [year]")],
       )
     ],
     download-qr: "",
