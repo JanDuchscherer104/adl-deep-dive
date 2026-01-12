@@ -143,40 +143,57 @@
   ]
 ]
 
-#slide(title: [Motivation: KANs in three mechanisms])[
+#slide(title: [Features of KANs])[
   #grid(
     columns: 3,
-    gutter: 25pt,
+    // gutter: 20pt,
     [
-      #color-block(title: [Decomposable parts], spacing: 0.55em)[
-        - Learn *univariate edge functions* instead of scalar weights.
-        - Individual components are meaningful and inspectable.
-        - Reductionist representation.
+      #color-block(title: [Where KANs work well])[
+        #block(height: 8cm)[
+          - Built for _smooth + compositional_ relationships
+          - Matches structure common in physics / biology
+          - Allocate capacity where needed (local splines)
+        ]
       ]
     ],
     [
-      #color-block(title: [Local capacity allocation], spacing: 0.55em)[
-        - B-spline basis is *local*.
-        - Complexity is concentrated where inputs occur.
-        - Supports incremental and localized updates.
+      #color-block(title: [Efficient in  science tasks])[
+        #block(height: 8cm)[
+          - Often similar error with fewer parameters than MLP baselines
+          - Function fitting and differential-equation solving (common in science)
+          - Precision scales independently from structure
+          // - Supports incremental and localized updates.
+
+        ]
       ]
     ],
+
     [
-      #color-block(title: [Continuous precision scaling], spacing: 0.55em)[
-        - Separate structure from precision.
-        - Refine accuracy via internal DoF (knot resolution).
-        - No need to change network topology.
+      #color-block(title: [Interpretability])[
+        #block(height: 8cm)[
+          - Inidividual components / connections are meaningful.
+          - Can be inspected, pruned, simplified into compact relations
+          - Extract a symbolic equation from the trained model
+        ]
       ]
     ],
   )
   @liu_kan_2025
 ]
 
-
-
+#slide(title: [MLP vs KAN: Visual comparison])[
+  #figure(
+    image(fig_path + "mlp-vs-kan3.png", height: 90%),
+    caption: [MLP vs. KAN visualization (learnable parts in blue, fixed in pink) @serranoacademy_kolmogorov-arnold_2024],
+  )
+]
 
 //  TODO: ensure to touch "both can be represented as dense bipartite graphs" (input to hidden, hidden to output)
 #slide(title: [From MLPs to KANs])[
+  // #color-block(title: [Same layout, different nonlinearity])[
+  //   - MLP: scalar weights $w_(j,i)$ on edges; fixed activation $sigma$ on nodes.
+  // ]
+
   #grid(
     columns: 2,
     gutter: 30pt,
@@ -187,59 +204,39 @@
 
           #v(0.2em)
           #text(size: 16pt)[
-            $ bold(x)_(l+1) = sigma(bold(W)_l bold(x)_l + bold(b)_l) $
+            $ bold(x)_(l+1) = sigma(bold(#text(fill: green)[$W$])_l bold(x)_l + bold(#text(fill: green)[$b$])_l) $
           ]
+
+          *Learnable weights + fixed activations*
+
       ]
-      Same dense bipartite wiring (fully connected layers).
     ],
     [
       #color-block(title: [KAN])[
-        - each edge is a *learnable 1D function* $phi_(j,i)(x)$
-        - Nodes mostly just *sum* incoming transformed signals.
-        - Think of $bold(Phi)_l$ as a *matrix of functions* (not scalars).
+        - Each edge is a *learnable 1D function* $phi_(j,i)(x)$
+        - Nodes add input → interpret learned functions.
 
         #v(0.2em)
         #text(size: 16pt)[
-          $ x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i)) $
+          $ x_(l+1,j) = sum_(i=1)^(n_l) #text(fill: green)[$phi$] _(l,j,i)(x_(l,i)) $
         ]
+
+        *Nodes add, function on edges are learned*
       ]
     ],
   )
 
   #v(0.35em)
-  #good-note([
-    (1) activations become learnable, (2) activations move from nodes #sym.arrow.r edges.
-  ])
+  #align(horizon + center)[
+    #good-note([
+      Same dense bipartite wiring.
+
+      Activations become learnable & move from nodes to edges.
+    ])
+  ]
   @liu_kan_2025
 ]
 
-#slide(title: [One key shift: structure vs precision])[
-  #grid(
-    columns: 2,
-    gutter: 30pt,
-    [
-      #color-block(title: [MLPs], spacing: 0.55em)[
-        - Structure and precision are *entangled*.
-        - Capacity is scaled discretely via width/depth.
-        - Refinement affects the entire function globally.
-      ]
-    ],
-    [
-      #color-block(title: [KANs], spacing: 0.55em)[
-        - *External DoF*: graph shape learns compositional structure.
-        - *Internal DoF*: spline resolution refines precision locally.
-        - Structure stays fixed while precision scales continuously.
-      ]
-    ],
-  )
-
-  #v(15pt)
-  #quote-block[
-    Capture the structure right first — then refine precision as needed.
-  ]
-]
-
-// // Adapted form https://typst.app/project/w3ZP87eMnIzmHrBT2OpRN1
 // #slide(title: [From MLPs to Kolmogorov-Arnold Networks (KANs)])[
 //   #color-block(title: [Same wiring, different learnable object])[
 //     Same basic layout as MLPs (fully connected layers):
@@ -314,19 +311,18 @@
   #grid(
     columns: (1.1fr, 1fr),
     [
-      - Smooth *piecewise-polynomial* functions of one variable $x$.
+      - *Smooth*, *piecewise-polynomial* & *locally bounded* functions of one variable $x$.
+      // - Controlled by by 3 knots + 2 neighboring knots + coefficients.
+      - Approximate 1D functions well with few parameters.
 
-      - Controlled by knots + coefficients → _flexible local curves_
+      - Controlled by knots $B_(m)(x)$ + coefficients $c_m$.
 
-      - Spline is bounded to a region
+      - Each Spline is a combination of many cubic Basis Splines (B-Splines)
 
-      - Each Spline is a combination of multiple cubic Basis Splines:
-
-      $
-        phi_(j,i)(x) = sum_(m=0)^(G+k-1) c_m B_m(x)
-      $
-
-      - Each basis function $B_m(x)$ has local support spanning $(k+2)$ consecutive knots (cubic: $k=3$ → 5 knots). #text(size: 12pt)[@liu_kan_2025@serranoacademy_kolmogorov-arnold_2024]
+        $
+          phi_(j,i)(x) = sum_(m=0)^(G+k-1) c_m B_(m)(x)
+        $
+      @liu_kan_2025@serranoacademy_kolmogorov-arnold_2024
 
       // - Basis Splines (B-Splines)
       //   - use a basis function
@@ -337,25 +333,20 @@
 
       // #color-block(title: [Splines in KANs])[
       //   - Each edge learns its own spline $phi_(j,i)(x)$
-      //   - Each requires only a few learn~able parameters
+      //   - Each requires only a few learnable parameters
       // ]
 
     ],
     [
-      // #figure(
-      //   // image(fig_path + "spline (1).png", width: 100%),
-      //   caption: [Constant B-Splines example\ (simplest type of basis splines)],
-      // )
 
       #figure(
-        image(fig_path + "spline_notation.png", width: 100%),
-        caption: [Each edge function is a combination of many cubic B-Splines  @liu_kan_2025],
+        image(fig_path + "cubic_bspline_basis_3_nonuniform.svg", width: 100%),
+        caption: [Edge function (dashed): linear combination of $G=3$ B-Splines wiofth degree $k=3$],
       )
 
       #v(20pt)
 
-      // #FIXME: Move this to Kan layer slide?
-      // #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)$]
+      #quote-block()[In KANs, each edge learns its own 1D spline $phi_(i,j)(x)$. @liu_kan_2025]
     ],
   )
 ]
@@ -465,30 +456,40 @@
 //   )
 // ]
 
-#slide(title: [Reality check: where the curse of dimensionality appears])[
-  #grid(
-    columns: 2,
-    gutter: 30pt,
-    [
-      #color-block(title: [MLPs (UAT)], spacing: 0.55em)[
-        - Universal approximation is an *existence* result.
-        - Precision requires increasing width/depth (external DoF).
-        - In high dimensions, parameters and samples can grow exponentially.
-      ]
-    ],
-    [
-      #color-block(title: [KANs (KART-inspired)], spacing: 0.55em)[
-        - Multivariate functions are decomposed into many 1D problems.
-        - If the target is *smooth + compositionally sparse*, refinement is 1D.
-        - Otherwise, the curse reappears as a *structure discovery* problem.
-      ]
-    ],
-  )
-
-  #v(15pt)
-  #quote-block[
-    KANs do not remove the curse — they *relocate* it from precision to structure.
+#slide(title: [Can KAT represent any high-dimensional function?])[
+  #quote-block()[
+    // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal → hard to learn in practice.
+    Classical KAT is elegant, but resulting 1D inner functions can be non-smooth or fractal
+    - Hard to learn in 2 Layer MLPs in practice
+    - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
   ]
+  #v(0.25em)
+  #color-block(title: [Mitigation])[
+    // - Classical KAT guarantees existence, but inner 1D functions can be highly non-smooth/fractal.
+    // - Mitigation: go beyond the rigid depth-2, width $(2n+1)$ form → use deeper/wider KANs.
+    // - In many real tasks we expect smooth, compositionally sparse structure, making KAT-like forms learnable.
+    // - This counts especially for scientific datasets, where underlying laws are often smooth and compositional.
+    - Don't stick to the rigid depth-2, width $(2n+1)$ form
+      - use deeper/wider KANs to admit smoother representations (_Use more than 2 layers_)
+    #v(0.8em)
+    - In real tasks we often expect smooth + compositionally sparse structure
+      - most typical cases allows smooth KA-like representations
+  ]
+]
+
+#slide(title: [Curse of Dimensionality])[
+  #quote-block()[More input dimensions #sym.arrow.r combinations explode #sym.arrow.r exponential growth of parameters]
+
+  ===== MLPs
+  - Universal Approximation Theorem: 2-layer MLP can _approximate any continuous f_
+  - But no efficiency guarantee
+    - _width_ can grow _exponentially_ with dimension (CoD in practice)
+
+  ===== KANs
+  - _Stack layers_ to learn compositional structure (feature learning)
+  - Replace weights with learnable 1D functions
+  - No high-D spline grid:
+    - many _1D splines + sums_, can beat CoD when the target is _smooth + compositional_
 ]
 
 /*
@@ -549,9 +550,6 @@
   )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @liu_kan_2025]
 ]
 */
-// END PART I: Felix' Part
-
-// PART II: JAN'S PART
 #slide(title: [KAN layer (definition + shape)])[
   #grid(
     columns: (1.4fr, 0.95fr),
@@ -897,8 +895,8 @@
       )
     ],
     [
-      #color-block(title: [Simplify the DoF (structure → equation)], spacing: 0.55em)[
-        + *Sparsify* edge functions: L1-on-activations + entropy regularization.
+      #color-block(title: [Simplify the DoF (structure #sym.arrow.r equation)], spacing: 0.55em)[
+        + *Sparsify* edge functions: L1 penality + entropy regularization.
         + *Prune* to a minimal shape (discover external structure).
         + *Symbolify* edge functions: replace splines with $y approx c f(a x + b) + d$.
         + Retrain only affine parameters and export a symbolic formula (human-in-the-loop). @liu_kan_2025
@@ -907,49 +905,6 @@
   )
 ]
 
-// #slide(title: [Case study (math): knot invariants (unsupervised)])[
-//   #grid(
-//     columns: (1fr, 1.25fr),
-//     gutter: 0.8cm,
-//     [
-//       #color-block(title: [Unsupervised discovery idea])[
-//         - Goal: discover sparse relations among many invariants (not just predict one target).
-//         - Train a sparse classifier KAN (shape $[18, 1, 1]$).
-//         - Fix the last activation to a Gaussian peak at 0 ⇒ positives satisfy
-//           $ sum_(i=1)^18 g_i(x_i) approx 0 $ (read $g_i$ off learned edges).
-//         - Sweep seeds + $lambda$ and cluster multiple discovered relations.
-//       ]
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "knot_unsupervised.png", width: 100%),
-//         caption: [Knot dataset (unsupervised): rediscovered relations. @liu_kan_2025 ],
-//       )
-//     ],
-//   )
-// ]
-
-// #slide(title: [Case study (physics): mobility edges via KANs])[
-//   #grid(
-//     columns: 2,
-//     [
-//       #color-block(title: [From data to an order parameter])[
-//         - Goal: learn the mobility edge separating localized vs extended phases.
-//         - Localization metric (eigenstate $bold(psi)^(k)$):
-//           $ "IPR"_k = (sum_n |psi_n^(k)|^4) / (sum_n |psi_n^(k)|^2)^2 $
-//           $ D_k = - log("IPR"_k) / log(N) $
-//         - Train → sparsify/prune → symbolify to recover a compact boundary $g(·)=0$
-//           (human-in-the-loop: constrain the symbol library).
-//       ]
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "mobility_edge.png", width: 100%),
-//         caption: [Mobility-edge discovery before/after symbolic snapping. @liu_kan_2025],
-//       )
-//     ],
-//   )
-// ]
 
 
 //
@@ -1025,4 +980,3 @@
     #bibliography("references.bib", title: none)
   ]
 ]
-
