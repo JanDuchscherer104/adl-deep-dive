@@ -134,7 +134,7 @@
     ],
   )
   #text(size: 22pt)[
-    #align(center + horizon)[
+    #align(left + horizon)[
       #note[
         + Can we separate _what_ is computed from _how precisely_ it is computed?
         + Can we design a network that is equally expressive but more interpretable?
@@ -515,7 +515,7 @@
   )[KAN viewpoint: assume smooth/compositional structure; learn $phi$ with splines and add depth to avoid pathological 2-layer forms. @liu_kan_2025]
 ]
 */
-#slide(title: [KAN layer])[
+#slide(title: [KAN Layer])[
   #grid(
     columns: (1.4fr, 0.95fr),
     gutter: 0.8cm,
@@ -582,7 +582,7 @@
         $
 
         - Trainable (per edge, backprop): #text(fill: green)[$c_i$], #text(fill: green)[$w_b$], #text(fill: green)[$w_s$]
-        - #text(fill: red)[$B_(i)(x)$]: B-spline basis functions (fixed *given the current knot*).
+        - #text(fill: red)[$B_(i)(x)$]: B-spline basis functions, fixed given the current grid.
         - $b(x)$: fixed *global* non-linearity (i.e. SiLU).
           #v(0.1em)
           #text(size: 16pt)[
@@ -597,7 +597,7 @@
         caption: [SiLU base function $b(x)$.],
       )
       // TODO: should we move this to the previous section "Splines in KANs"?
-      #color-block(title: [Why splines?])[
+      #color-block(title: [Why B-Splines?])[
         - *local*, *translation-invariant* \
           #text(size: 14pt)[
             - local capacity allocation \
@@ -613,16 +613,16 @@
 
 #slide(title: [Grid Update - Knot Relocation])[
   #grid(
-    columns: (1fr, 1.4fr),
+    columns: (1.2fr, 1.4fr),
     [
       #color-block(title: [Keep knots where the data lives], spacing: 0.55em)[
         - _Non-stationary_ activations in training, but splines live on bounded grid
-        - #strong[Grid update:] periodically estimate activation distributions; _move knots_ to maintain coverage//(e.g., via quantiles).
-        - Not by backprop: _non-differentiable reparameterization_
+        - #strong[Grid update:] periodically estimate activation distributions; _move knots_ to maintain coverage.
+        - _non-differentiable_ reparameterization
       ]
       #figure(
         image(fig_path + "two_gaussians_drift_minimal.svg", width: 72%),
-        caption: text(size: 12pt)[Activation drift motivates knot relocation.],
+        caption: text(size: 12pt)[Non-stationarity motivates knot relocation.],
       )
     ],
     [
@@ -637,7 +637,7 @@
     ],
   )
 ]
-#slide(title: [Grid Extension: Curriculum over Spatial Resolution])[
+#slide(title: [Grid Extension: Accuracy Scaling])[
   #grid(
     columns: (1fr, 0.8fr),
     gutter: 0.8cm,
@@ -683,7 +683,7 @@
   )
 ]
 
-#slide(title: [External vs internal DoF: structure vs precision])[
+#slide(title: [External vs Internal DoF: Structure vs Precision])[
   #color-block(title: [Two kinds of degrees of freedom (DoF)], spacing: 0.45em)[
     - *External DoF*: width/depth/connectivity #sym.arrow.r *which interactions* among variables.
     - *Internal DoF*: spline grid $G$ + coefficients $c_i$ #sym.arrow.r *how precisely* each interaction is represented.
@@ -808,8 +808,8 @@
       #color-block(title: [Limitations])[
         - Baseline KANs are up to 10x *slower* (batching, spline updates, HW); faster follow-ups exist @li2024kolmogorovarnoldnetworksradialbasis.
         // - Still a novel concept, paper released in Feb. 2025
-        - Likely not an MLP replacement in large-scale tasks @yu2024kanmlpfairercomparison.
-        - Sensitivity to additional hyperparameters (grid size, update schedule).
+        - Likely *not an MLP replacement* in large-scale tasks @yu2024kanmlpfairercomparison.
+        - Sensitivity to *additional hyperparameters* (grid size, update schedule).
       ]
 
     ],
