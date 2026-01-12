@@ -9,7 +9,7 @@
 #show: definitely-not-isec-theme.with(
   aspect-ratio: "16-9",
   slide-alignment: top,
-  progress-bar: false,
+  progress-bar: true,
   institute: [Munich University of Applied Sciences],
   logo: [#image(fig_path + "hm-logo.svg", width: 2cm)],
   config-info(
@@ -96,7 +96,7 @@
 )[
   #figure(
     image(fig_path + "mlp-vs-kan2.png", width: 100%),
-    caption: [MLP vs KAN overview.],
+    caption: [MLP vs KAN overview. @liu_kan_2025],
   )
 ]
 
@@ -157,7 +157,7 @@
       ]
     ],
     [
-      #color-block(title: [Efficient in  science tasks])[
+      #color-block(title: [Efficient in science tasks])[
         #block(height: 8cm)[
           - Often similar error with fewer parameters than MLP baselines
           - Function fitting and differential-equation solving (common in science)
@@ -171,7 +171,7 @@
     [
       #color-block(title: [Interpretability])[
         #block(height: 8cm)[
-          - Inidividual components / connections are meaningful.
+          - Individual components / connections are meaningful.
           - Can be inspected, pruned, simplified into compact relations
           - Extract a symbolic equation from the trained model
         ]
@@ -259,7 +259,7 @@
         - The only _true_ multivariate operation is *sum*; everything else can be composed from univariate transforms + additions.
 
         // - 1D functions can be approximated very well (e.g., with splines).
-        - Spines are well-suited to approximate 1D functions efficiently.
+        - Splines are well-suited to approximate 1D functions efficiently.
       ]
       #text(size: 12pt)[@liu_kan_2025]
     ],
@@ -425,7 +425,7 @@
   #quote-block()[
     // Classical KAT is elegant, but the required 1D inner functions can be non-smooth/fractal #sym.arrow.r hard to learn in practice.
     Classical KAT is elegant, but resulting 1D inner functions can be non-smooth or fractal
-    - Hard to learn in 2 Layer MLPs in practice
+    - Hard to learn in the rigid depth-2 KART form in practice
     - Earlier research described it as _“theoretically sound but practically useless"_@girosi_representation_1989@poggio_theoretical_2019
   ]
   #v(30pt)
@@ -526,7 +526,9 @@
 
         - Activation of the $j$-th neuron in layer $l+1$: // as sum of incoming signals
 
-        $ x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i)) $
+        $
+          x_(l+1,j) = sum_(i=1)^(n_l) phi_(l,j,i)(x_(l,i))
+        $
 
         // - $n_l$ nodes in layer $l$ (shape $[n_0, dots, n_L]$).\
         //   Indices: $i$ input, $j$ output.
@@ -625,7 +627,8 @@
     ],
     [
       #figure(
-        image(fig_path + "spline_notation_grid_extension.jpg", width: 79%),
+        image(fig_path + "spline_notation_grid_extension.jpg", width: 73%),
+        caption: [@liu_kan_2025],
       )
       // #text(size: 15pt)[
       #quote-block[
@@ -683,7 +686,7 @@
 #slide(title: [External vs internal DoF: structure vs precision])[
   #color-block(title: [Two kinds of degrees of freedom (DoF)], spacing: 0.45em)[
     - *External DoF*: width/depth/connectivity #sym.arrow.r *which interactions* among variables.
-    - *Internal DoF*: spline grid $G$ + coefficients #sym.arrow.r *how precisely* each interaction is represented.
+    - *Internal DoF*: spline grid $G$ + coefficients $c_i$ #sym.arrow.r *how precisely* each interaction is represented.
     - *Key shift*: KANs separate structure from precision, so each can scale independently.
   ]
 
@@ -696,13 +699,15 @@
         - Structure + precision are *entangled*.
         - More accuracy #sym.arrow.r scale width/depth (external DoF).
         - No dedicated control over internal DoF.
+        - $cal(O)(N^2L)$
       ]
     ],
     [
       #color-block(title: [KANs])[
         - External DoF #sym.arrow.l.r *compositional structure*.
         - Internal DoF #sym.arrow.l.r *local precision* on edges.
-        - Grid extension increases internal DoF while keeping structure fixed. @liu_kan_2025
+        - Grid extension increases internal DoF while keeping structure fixed.
+        - $cal(O)(N^2L(G+k))$
       ]
     ],
   )
@@ -710,51 +715,43 @@
 ]
 
 
+// #color-block(title: [Local plasticity])[
+//   - *Mechanism:* B-spline bases have *local support* \
+//     #sym.arrow.r only a few basis functions are non-zero per sample \
+//     #sym.arrow.r gradients touch only a few nearby coefficients.
 
-// #slide(title: [Scaling laws])[
-//   #grid(
-//     columns: 2,
-//     [
-//       #figure(
-//         image(fig_path + "model_scaling.pdf", width: 80%),
-//         caption: [Scaling vs MLP baselines. @liu_kan_2025],
-//       )
-//       #color-block(title: [Theory + observation])[
-//         - Smooth-KAT bound: $|f - "KAN"_G| <= C G^(-(k+1))$ (cubic: $k=3 -> alpha approx 4$).
-//         - Comparison: manifold view ($alpha approx (k+1)/d$) vs arity view ($alpha approx (k+1)/2$).
-//         - Empirically: KANs reach steeper scaling than MLPs on compositional data.
-//         - Caveat: this advantage assumes the target admits a *smooth compositional* KAN/KAR; we usually do not know this structure a priori.
-//       ]
-//       @liu_kan_2025
-//       // [Connections: scaling laws; approximation theory; bias-variance trade-off.]
-//     ],
-//     [
-//       #figure(
-//         image(fig_path + "model_scaling.pdf", width: 100%),
-//         caption: [Scaling vs MLP baselines. @liu_kan_2025],
-//       )
-//     ],
-//   )
-// ]
+//   // - *Toy evidence (paper):* sequentially fit separated peaks \
+//   //   #sym.arrow.r KAN updates only the current region and preserves earlier peaks.
+
+//   - *Contrast to MLPs:* parameters are *globally coupled* (dense mixing + distributed features) \
+//     #sym.arrow.r updates can reshape the function broadly \
+//     #sym.arrow.r interference / catastrophic forgetting.
+
+//   - “locality” in high dimensions is unclear. @liu_kan_2025
 
 
 //
-#slide(title: [Continual learning and locality])[
+#slide(title: [Continual Learning & Locality])[
+  #set list(spacing: 0.7em)
   #grid(
-    columns: 2,
+    columns: (1.5fr, 2fr),
+    gutter: 30pt,
     [
-      #color-block(title: [Local plasticity])[
-        - B-spline bases are local: one sample updates only a few *nearby* spline coefficients.
-        - Previously learned regions stay intact #sym.arrow.r reduced catastrophic forgetting (toy sequential peaks).
-        - MLPs use global activations (ReLU/Tanh/SiLU): local updates can propagate broadly #sym.arrow.r interference.
-        - Caveat: results are preliminary; “locality” in high dimensions is less clear. @liu_kan_2025
+      #color-block(title: [Why KANs forget less])[
+        - *Local plasticity:* Each spline basis has *local support* \
+          #sym.arrow.r only a few basis functions are non-zero per sample \
+          #sym.arrow.r gradients touch only a few nearby coefficients. \
+          #sym.arrow.r updates are localized.
+        - *Contrast (MLPs):* Any local update has global effects \
+          #sym.arrow.r learning a new task may overwrite previous knowledge \
+          #sym.arrow.r catastrophic forgetting.
+        - Locality in high dimensions is unclear.
       ]
-      // [Connections: catastrophic forgetting; local adaptation; compute reuse in continual settings.]
     ],
     [
       #figure(
         image(fig_path + "continual_learning.pdf", width: 100%),
-        caption: [Continual learning experiments. @liu_kan_2025],
+        caption: [Sequential learning (toy 1D): KAN preserves earlier regions; MLP forgets. @liu_kan_2025],
       )
     ],
   )
@@ -800,16 +797,16 @@
     gutter: 30pt,
     [
       #color-block(title: [Takeaways])[
-        - KANs are most suited for structured, compositional, low-data scientific tasks.
+        - KANs are most suited for *structured, compositional, small-scale scientific tasks*.
         // - KANs move nonlinearity to edges, learning 1D functions directly.
-        - Separate control over structure vs precision enable improve fine-tuning, continual learning & scaling.
-        - Sparsification enables symbolic interpretability and discovery of symbolic formulas (white-box ML).
+        - *Decoupled internal and external DoF* enable improved fine-tuning, *continual learning* & scaling.
+        - Sparsification enables symbolic interpretability and discovery of symbolic formulas (*white-box ML*).
       ]
     ],
     [
       #color-block(title: [Limitations])[
-        - Training is slower (non-optimized acceleration HW). @liu_kan_2025
-        - Limited framework support
+        - Training is up to $10 times$ slower (lack of optimized HW, batching). @liu_kan_2025
+        -
         - Still a novel concept, paper released in Feb. 2025
       ]
 
